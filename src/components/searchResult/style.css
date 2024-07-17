@@ -1,0 +1,20 @@
+.buttonbutton:hover .show {
+  display: inline;
+  transition: all 0.3s ease-in-out;
+  text-align: center;
+}
+
+.buttonbutton:hover .line {
+  width: 90px;
+  transition: all 0.2s ease-in-out;
+}
+
+.buttonbutton:hover .dashed {
+  width: 80px;
+  transition: all 0.2s ease-in-out;
+}
+.bookButton:hover .bookbuttonshow{
+  display: inline;
+}
+
+

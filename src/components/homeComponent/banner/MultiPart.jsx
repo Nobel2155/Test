@@ -1,329 +1,310 @@
-'use client'
-import React, { useEffect, useState } from 'react'
+'use client';
 
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import _ from 'lodash';
+import airportDetails from '@/dataSet/airportDetails'; 
+import SearchBtn from "./SearchBtn";// Import the local data
 
-const MultiPart = () => {
-    const [fromCode, setFromCode] = useState('From');
-    const [toCode, setToCode] = useState('To');    
-  
-    const [fromInput, setFromInput] = useState(''); // Track user's input for "From"
-    const [toInput, setToInput] = useState('');
-    const [fromList, setFromList] = useState([]);
-    const [toList, setToList] = useState([]);
-    const [fromCity, setFromCity] = useState('Select a city');
-    const [fromAirportName, setFromAirportName] = useState('');
-  
-    const [toCity, setToCity] = useState('Select a city');
-    const [toAirportName, setToAirportName] = useState('');
-  
-    const [isFromInputFocused, setIsFromInputFocused] = useState(false);
-    const [isToInputFocused, setIsToInputFocused] = useState(false);
-  
-    const [departureDate, setDepartureDate] = useState('');
-  
-    useEffect(() => {
-        // Retrieve stored data from localStorage when the component mounts
-        const storedFromCode = localStorage.getItem('fromCode');
-        const storedToCode = localStorage.getItem('toCode');
-        const storedDepartureDate = localStorage.getItem('departureDate');
-        const storedFromCity = localStorage.getItem('fromCity');
-        const storedFromAirportName = localStorage.getItem('fromAirportName');
-        const storedToCity = localStorage.getItem('toCity');
-        const storedToAirportName = localStorage.getItem('toAirportName');
-  
-        if (storedFromCode) setFromCode(storedFromCode);
-        if (storedToCode) setToCode(storedToCode);
-        if (storedDepartureDate) setDepartureDate(storedDepartureDate);
-        if (storedFromCity) setFromCity(storedFromCity);
-        if (storedFromAirportName) setFromAirportName(storedFromAirportName);
-        if (storedToCity) setToCity(storedToCity);
-        if (storedToAirportName) setToAirportName(storedToAirportName);
-    }, []);
-  
-    // Fetch function for 'From' input
-    const fetchFromData = (value) => {
-        fetch("https://rest-api-airport-details-3e9021974608.herokuapp.com/api/airportdetails")
-            .then((response) => response.json())
-            .then((json) => {
-                const filteredList = json.airportDetails.filter((airport) => {
-                    const valueLowerCase = value.toLowerCase();
-                    const nameLowerCase = airport.airportName.toLowerCase();
-                    const codeLowerCase = airport.airportCode.toLowerCase();
-                    const cityLowerCase = airport.cityName.toLowerCase();
-                    
-                    return (
-                        nameLowerCase.includes(valueLowerCase) ||
-                        codeLowerCase.includes(valueLowerCase) ||
-                        cityLowerCase.includes(valueLowerCase)
-                    );
-                });
-                setFromList(filteredList);
-            })
-            .catch((error) => {
-                console.error('Error fetching data:', error);
-            });
-    };
-  
-    // Fetch function for 'To' input
-    const fetchToData = (value) => {
-        fetch("https://rest-api-airport-details-3e9021974608.herokuapp.com/api/airportdetails")
-            .then((response) => response.json())
-            .then((json) => {
-                const filteredList = json.airportDetails.filter((airport) => {
-                    const valueLowerCase = value.toLowerCase();
-                    const nameLowerCase = airport.airportName.toLowerCase();
-                    const codeLowerCase = airport.airportCode.toLowerCase();
-                    const cityLowerCase = airport.cityName.toLowerCase();
-                    
-                    return (
-                        nameLowerCase.includes(valueLowerCase) ||
-                        codeLowerCase.includes(valueLowerCase) ||
-                        cityLowerCase.includes(valueLowerCase)
-                    );
-                });
-                setToList(filteredList);
-            })
-            .catch((error) => {
-                console.error('Error fetching data:', error);
-            });
-    };
-  
-    // Handle 'From' input change
-    const handleFromChange = (value) => {
-        setFromInput(value);
-        setFromAirportName(value); // Reflect user's input in the input field
-        fetchFromData(value);
-    };
-  
-    // Handle 'To' input change
-    const handleToChange = (value) => {
-        setToInput(value);
-        setToAirportName(value); // Reflect user's input in the input field
-        fetchToData(value);
-    };
-  
-    // Handle 'From' selection from the dropdown
-    const handleFromSelect = (airport) => {
-        setFromCity(airport.cityName);
-        setFromAirportName(airport.airportName);
-        setFromCode(airport.airportCode);
-        setFromInput(''); // Clear the input after selection
-        setFromList([]); // Hide the dropdown after selection
-        setIsFromInputFocused(false); // Hide dropdown when input is deselected
-    };
-  
-    // Handle 'To' selection from the dropdown
-    const handleToSelect = (airport) => {
-        setToCity(airport.cityName);
-        setToAirportName(airport.airportName);
-        setToCode(airport.airportCode);
-        setToInput(''); // Clear the input after selection
-        setToList([]); // Hide the dropdown after selection
-        setIsToInputFocused(false); // Hide dropdown when input is deselected
-    };
-  
-    // Handle 'From' input focus
-    const handleFromFocus = () => {
-        setIsFromInputFocused(true);
-        fetchFromData(fromAirportName); // Fetch based on the current input value
-    };
-  
-    // Handle 'To' input focus
-    const handleToFocus = () => {
-        setIsToInputFocused(true);
-        fetchToData(toAirportName); // Fetch based on the current input value
-    };
-    
-  
-    // Handle 'From' input blur
-    const handleFromBlur = () => {
-        setTimeout(() => setIsFromInputFocused(false), 100);
-    };
-  
-    // Handle 'To' input blur
-    const handleToBlur = () => {
-        setTimeout(() => setIsToInputFocused(false), 100);
-    };
-  
-    // Handle date change
-    const handleDateChange = (e) => {
-        setDepartureDate(e.target.value);
-    };
-  
-    // Handle form submission and storing data in localStorage
-    const handleSearch = () => {
-        localStorage.setItem('fromCode', fromCode);
-        localStorage.setItem('toCode', toCode);
-        localStorage.setItem('departureDate', departureDate);
-        // localStorage.setItem('fromCity', fromCity);
-        // localStorage.setItem('fromAirportName', fromAirportName);
-        // localStorage.setItem('toCity', toCity);
-        // localStorage.setItem('toAirportName', toAirportName);
-  
-        // You can also handle further actions here, like submitting the form or navigating to another page
-        console.log('Data stored in localStorage');
-    };
-  
-    const handleTravalervisible = () =>{        
-        if(isVisibleTraveler == false){
-            
-            setIsVisibleTraveler(true);
-        }
-        if(isVisibleTraveler == true){
-            
-            setIsVisibleTraveler(false);
-        }
+const Page = () => {
+  const [inputGroups, setInputGroups] = useState([{ id: 1 }, { id: 2 }]);
+  const [departureAirports, setDepartureAirports] = useState([{ name: '', code: '' }, { name: '', code: '' }]);
+  const [arrivalAirports, setArrivalAirports] = useState([{ name: '', code: '' }, { name: '', code: '' }]);
+  const [departureDates, setDepartureDates] = useState(['', '']);
+  const [dropdownData, setDropdownData] = useState({ from: [], to: [] });
+  const [focus, setFocus] = useState({ from: null, to: null });
+  const dropdownRef = useRef(null);
+
+  // Updated customIndexList with the new structure
+  const customIndexList = [
+    { code: "DAC", index: 1 },
+    { code: "CGP", index: 2 },
+    { code: "CXB", index: 3 },
+    { code: "SPD", index: 4 },
+    { code: "ZYL", index: 5 },
+    { code: "RJH", index: 6 },
+    { code: "BZL", index: 7 },
+    { code: "DXB", index: 8 },
+    { code: "JFK", index: 9 },
+    { code: "SIN", index: 10 },
+    // Add more airports with their custom indices
+  ];
+
+  // Updated customIndexedAirports using the customIndexList
+  const customIndexedAirports = customIndexList
+    .map(({ code, index }) => {
+      const airport = airportDetails.find((a) => a.airportCode === code);
+      return airport ? { ...airport, customIndex: index } : null;
+    })
+    .filter((airport) => airport !== null);
+
+  useEffect(() => {
+    const storedDepartureAirports = JSON.parse(localStorage.getItem('departureAirports')) || [''];
+    const storedArrivalAirports = JSON.parse(localStorage.getItem('arrivalAirports')) || [''];
+    const storedDepartureDates = JSON.parse(localStorage.getItem('departureDates')) || ['', ''];
+
+    const loadedDepartureAirports = storedDepartureAirports.map(code => ({ name: '', code }));
+    const loadedArrivalAirports = storedArrivalAirports.map(code => ({ name: '', code }));
+
+    setDepartureAirports(loadedDepartureAirports);
+    setArrivalAirports(loadedArrivalAirports);
+    setDepartureDates(storedDepartureDates);
+  }, []);
+
+  useEffect(() => {
+    const storedDepartureAirports = departureAirports.map(airport => airport.code);
+    localStorage.setItem('departureAirports', JSON.stringify(storedDepartureAirports));
+  }, [departureAirports]);
+
+  useEffect(() => {
+    const storedArrivalAirports = arrivalAirports.map(airport => airport.code);
+    localStorage.setItem('arrivalAirports', JSON.stringify(storedArrivalAirports));
+  }, [arrivalAirports]);
+
+  useEffect(() => {
+    localStorage.setItem('departureDates', JSON.stringify(departureDates));
+  }, [departureDates]);
+
+  const debouncedFetchFromData = useCallback(_.debounce((value) => {
+    filterData(value, 'from');
+  }, 300), []);
+
+  const debouncedFetchToData = useCallback(_.debounce((value) => {
+    filterData(value, 'to');
+  }, 300), []);
+
+  const filterData = (value, type) => {
+    if (!value) {
+      setDropdownData((prevState) => ({ ...prevState, [type]: customIndexedAirports }));
+      return;
     }
-    const [totalTraveller,setTotalTraveller] = useState(1);
-    const [isVisibleTraveler, setIsVisibleTraveler] = useState(false);
-  
-    const[noOfAdt,setNoOfAdt] = useState(1);  
-    const handleAdultIncrement = () => {
-      if(totalTraveller<9){
-        if(noOfAdt<9){      
-          setNoOfAdt(noOfAdt + 1)
-        }      
-      }
-      else{
-        window.alert("Maximum limit reached!");
-      }
-    };
-    const handleAdultDecrement = () => {
-      if(noOfAdt>1){      
-        setNoOfAdt(noOfAdt - 1);
-      }else{
-        window.alert("MInimun limit reached!");
-      }
+
+    const filteredList = airportDetails.filter((airport) => {
+      const valueLowerCase = value.toLowerCase();
+      const nameLowerCase = airport.airportName.toLowerCase();
+      const codeLowerCase = airport.airportCode.toLowerCase();
+      const cityLowerCase = airport.cityName.toLowerCase();
+      const countryLowerCase = airport.countryName.toLowerCase();
+
+      return (
+        nameLowerCase.includes(valueLowerCase) ||
+        codeLowerCase.includes(valueLowerCase) ||
+        cityLowerCase.includes(valueLowerCase) ||
+        countryLowerCase.includes(valueLowerCase)
+      );
+    });
+
+    setDropdownData((prevState) => ({ ...prevState, [type]: filteredList }));
+  };
+
+  const handleDepartureCityChange = (index, value) => {
+    const updatedAirports = [...departureAirports];
+    updatedAirports[index] = { name: value, code: '' };
+    setDepartureAirports(updatedAirports);
+    debouncedFetchFromData(value);
+  };
+
+  const handleArrivalCityChange = (index, value) => {
+    const updatedAirports = [...arrivalAirports];
+    updatedAirports[index] = { name: value, code: '' };
+    setArrivalAirports(updatedAirports);
+    debouncedFetchToData(value);
+  };
+
+  const handleDepartureDateChange = (index, value) => {
+    const today = new Date().toISOString().split('T')[0]; // Get today's date in 'YYYY-MM-DD' format
+    if (value >= today) { // Only accept dates from today onwards
+      const updatedDates = [...departureDates];
+      updatedDates[index] = value;
+      setDepartureDates(updatedDates);
     }
-    const handleChangeAdult = (e) => {
-      const newValue = parseInt(e.target.value);
-      setNoOfAdt(newValue >= 0 ? newValue : 0);    
-    };
-  
-    const[noOfChildren,setNoOfChildren] = useState(0); 
-    const handleChildrenIncrement = () => {
-      if(totalTraveller<9){
-        if(noOfChildren<9){      
-          setNoOfChildren(noOfChildren + 1)
-        }
-      }    
-      else{
-        window.alert("Maximum limit reached!");
-      }
-    };
-    const handleChildrenDecrement = () => {    
-        if(noOfChildren>0){      
-          setNoOfChildren(noOfChildren - 1);
-        }else{
-        window.alert("MInimun limit reached!");
-      }
+  };
+
+  const handleFromSelect = (index, airport) => {
+    const updatedAirports = [...departureAirports];
+    updatedAirports[index] = { name: airport.airportName, code: airport.airportCode };
+    setDepartureAirports(updatedAirports);
+    setFocus((prevState) => ({ ...prevState, from: null }));
+  };
+
+  const handleToSelect = (index, airport) => {
+    const updatedAirports = [...arrivalAirports];
+    updatedAirports[index] = { name: airport.airportName, code: airport.airportCode };
+    setArrivalAirports(updatedAirports);
+    setFocus((prevState) => ({ ...prevState, to: null }));
+  };
+
+  const handleAddInputGroup = () => {
+    const newId = inputGroups.length > 0 ? inputGroups[inputGroups.length - 1].id + 1 : 1;
+    setInputGroups([...inputGroups, { id: newId }]);
+    setDepartureAirports([...departureAirports, { name: '', code: '' }]);
+    setArrivalAirports([...arrivalAirports, { name: '', code: '' }]);
+    setDepartureDates([...departureDates, '']);
+  };
+
+  const handleDeleteInputGroup = (id) => {
+    if (inputGroups.length > 2) {
+      const groupIndex = inputGroups.findIndex(group => group.id === id);
+
+      const updatedDepartureAirports = [...departureAirports];
+      const updatedArrivalAirports = [...arrivalAirports];
+      const updatedDepartureDates = [...departureDates];
+
+      updatedDepartureAirports.splice(groupIndex, 1);
+      updatedArrivalAirports.splice(groupIndex, 1);
+      updatedDepartureDates.splice(groupIndex, 1);
+
+      setDepartureAirports(updatedDepartureAirports);
+      setArrivalAirports(updatedArrivalAirports);
+      setDepartureDates(updatedDepartureDates);
+
+      const updatedInputGroups = inputGroups.filter(group => group.id !== id);
+      setInputGroups(updatedInputGroups);
     }
-    const handleChangeChildren = (e) => {
-      const newValue = parseInt(e.target.value);
-      setNoOfChildren(newValue >= 0 ? newValue : 0);
-      
-    };
-  
-    const[noOfKids,setNoOfKids] = useState(0);
-    const handleKidsIncrement = () => {
-      if(totalTraveller<9){
-        if(noOfKids<9){      
-          setNoOfKids(noOfKids + 1)
-        }
-      }
-      else{
-        window.alert("Maximum limit reached!");
-      }
-    };
-    const handleKidsDecrement = () => {
-      if(noOfKids>0){      
-        setNoOfKids(noOfKids - 1);
-      }else{
-        window.alert("MInimun limit reached!");
-      }
+  };
+
+  const handleToggleFocus = (type, index) => {
+    if (focus[type] === index) {
+      // If already focused, toggle off
+      setFocus({ from: null, to: null });
+    } else {
+      // Otherwise, focus on the new field and load dropdown data
+      setFocus({ from: type === 'from' ? index : null, to: type === 'to' ? index : null });
+      setDropdownData((prevState) => ({ ...prevState, [type]: customIndexedAirports }));
     }
-    const handleChangeKids = (e) => {
-      const newValue = parseInt(e.target.value);
-      setNoOfKids(newValue >= 0 ? newValue : 0);
-      
-    };
-  
-    const[noOfInfent,setNoOfInfent] = useState(0); 
-    const handleInfentIncrement = () => {
-      if(totalTraveller<9){
-        
-        if(noOfInfent<noOfAdt){      
-          setNoOfInfent(noOfInfent + 1)
-        }
-      }
-      else{
-        window.alert("Maximum limit reached!");
-      }
-    };
-    const handleInfentDecrement = () => {
-      if(noOfInfent>0){      
-        setNoOfInfent(noOfInfent - 1);
-      }else{
-        window.alert("MInimun limit reached!");
-      }
+  };
+
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setFocus({ from: null, to: null });
     }
-    const handleChangeInfent = (e) => {
-      const newValue = parseInt(e.target.value);
-      setNoOfInfent(newValue >= 0 ? newValue : 0);
-      
-    }; 
-  
-  
-  
-   
-      const [items, setItems] = useState(['']);
-  
-      const addItem = () => {
-          const newItem = `Itemmm ${items.length + 1}`;
-          setItems([...items, newItem]);
-      };
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className='flex gap-x-2'>
-                            <input 
-                                className='h-[50px] w-[250px]  border-black border-[2px] ps-[15px]' 
-                                type="text" 
-                                placeholder='FROM' 
-                                value={fromAirportName} 
-                                onChange={(e) => handleFromChange(e.target.value)} 
-                                onFocus={handleFromFocus}
-                                onClick={handleFromFocus} // Fetch data on click
-                                onBlur={handleFromBlur}
-                            />
-                            <input 
-                                className='h-[50px] w-[250px]  border-black border-[2px]  ps-[15px]' 
-                                type="text" 
-                                placeholder='TO' 
-                                value={toAirportName} 
-                                onChange={(e) => handleToChange(e.target.value)}
-                                onFocus={handleToFocus}
-                                onClick={handleToFocus} // Fetch data on click
-                                onBlur={handleToBlur}
-                            />
-
-                            
-
-                            <div >
-                            
-                            </div>
-                            <input 
-                                type="date" 
-                                value={departureDate} 
-                                onChange={handleDateChange} 
-                                className='h-[50px] w-[150px]  border-black border-[2px]' 
-                            />
-                            {/* <p 
-                                className='text-center bg-white text-green-700 w-[150px] flex items-center justify-center cursor-pointer' 
-                                onClick={handleSearch}
-                            >
-                                Submit
-                            </p> */}
+    <div className='py-1 text-black'>
+      <div className=' py-1 rounded shadow-md'>
+        {inputGroups.map((group, index) => (
+          <div key={group.id} className='flex flex-wrap mb-4 relative gap-x-1'>
+            <div className='flex-1 relative mb-4 sm:mb-0'>
+              <input
+                type="text"
+                className='mr-2 w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 h-[50px]'
+                placeholder={`Departure city for group ${group.id}`}
+                value={departureAirports[index].name || ''}
+                onChange={(e) => handleDepartureCityChange(index, e.target.value)}
+                onClick={() => handleToggleFocus('from', index)}
+              />
+              {focus.from === index && dropdownData.from.length > 0 && (
+                <div ref={dropdownRef} className='max-h-[300px] w-full bg-white shadow-md absolute top-full left-0 overflow-y-auto z-10'>
+                  <ul>
+                    {dropdownData.from.map((airport) => (
+                  <div
+                    key={airport.airportCode}
+                    className="bg-blue-50 cursor-pointer hover:bg-blue-100"
+                    onMouseDown={() => handleFromSelect(index, airport)}
+                  >
+                    <div className="bg-white py-1 px-2 border rounded-lg overflow-hidden">
+                      <div className="flex justify-between">
+                        <div className="text-start">
+                          <p className="mb-2 text-gray-500 text-xs font-light">
+                            {airport.cityName}
+                          </p>
+                          <p className="mb-1 text-sm font-semibold text-black">
+                            {airport.airportName}
+                          </p>
                         </div>
-  )
-}
+                        <p className="text-gray-500 text-xs font-light">
+                          {airport.airportCode}
+                        </p>
+                        {/* Display the custom index */}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+            <div className='flex-1 relative mb-4 sm:mb-0'>
+              <input
+                type="text"
+                className='mr-2 w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 h-[50px]'
+                placeholder={`Arrival city for group ${group.id}`}
+                value={arrivalAirports[index].name || ''}
+                onChange={(e) => handleArrivalCityChange(index, e.target.value)}
+                onClick={() => handleToggleFocus('to', index)}
+              />
+              {focus.to === index && dropdownData.to.length > 0 && (
+                <div ref={dropdownRef} className='max-h-[300px] w-full bg-white shadow-md absolute top-full left-0 overflow-y-auto z-10'>
+                  <ul>
+                  {dropdownData.to.map((airport) => (
+                  <div
+                    key={airport.airportCode}
+                    className="bg-blue-50 cursor-pointer hover:bg-blue-100"
+                    onMouseDown={() => handleToSelect(index, airport)}
+                  >
+                    <div className="bg-white py-1 px-2 border rounded-lg overflow-hidden">
+                      <div className="flex justify-between">
+                        <div className="text-start">
+                          <p className="mb-2 text-gray-500 text-xs font-light">
+                            {airport.cityName}
+                          </p>
+                          <p className="mb-1 text-sm font-semibold text-black">
+                            {airport.airportName}
+                          </p>
+                        </div>
+                        <p className="text-gray-500 text-xs font-light">
+                          {airport.airportCode}
+                        </p>
+                        {/* Display the custom index */}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+            <div className='flex-1'>
+              <input
+                type="date"
+                className='w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 h-[50px]'
+                value={departureDates[index] || ''}
+                onChange={(e) => handleDepartureDateChange(index, e.target.value)}
+              />
+            </div>
+            {inputGroups.length > 2 && (
+              <div className='flex-none ml-2'>
+                <button
+                  className='px-2 py-2 bg-red-500 text-white rounded h-[50px]'
+                  onClick={() => handleDeleteInputGroup(group.id)}
+                >
+                  Delete
+                </button>
+              </div>
+            )}
+          </div>
+        ))}
+        <div className='mt-4'>
+          <button
+            className='bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 ms-auto flex'
+            onClick={handleAddInputGroup}
+          >
+            Add More
+          </button>
+        </div>
+        <SearchBtn/>
+      </div>
+    </div>
+  );
+};
 
-export default MultiPart
+export default Page;
+
+
