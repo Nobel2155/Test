@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 
 import Banner from "@/components/homeComponent/banner/Banner";
 import HamsDeal from "@/components/homeComponent/HamsDeal";
@@ -11,19 +11,19 @@ import TransportCard from "@/components/homeComponent/TransportCard";
 import FeedbackSection from "@/components/homeComponent/feedback/FeedbackSection";
 
 const page = () => {
-  return (
-    <div>
-        <Banner/>
-        <HamsDeal/>
-        <ExploreCard/>
-        <AirportService/>
-        <HotelCard/> 
-        <ExperianceCard/>
-        <ChoseSection/>
-        <TransportCard/>
-        <FeedbackSection/>
-    </div>
-  )
-}
+    return (
+        <div>
+            <Banner />
+            <HamsDeal />
+            <ExploreCard />
+            <AirportService />
+            <HotelCard />
+            <ExperianceCard />
+            <ChoseSection />
+            <TransportCard />
+            <FeedbackSection />
+        </div>
+    );
+};
 
-export default page
+export default page;

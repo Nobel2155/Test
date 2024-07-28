@@ -1,456 +1,330 @@
-'use client'
-import React, { useEffect, useState } from 'react'
-import { MdOutlineKeyboardArrowDown } from "react-icons/md";
-import MultiPart from "@/components/homeComponent/banner/MultiPart"
+'use client';
 
-const Multicity = () => {
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import _ from 'lodash';
+import airportDetails from '@/dataSet/airportDetails'; 
+import { useRouter } from 'next/navigation';
 
-  const [fromCode, setFromCode] = useState('From');
-  const [toCode, setToCode] = useState('To');    
+const Page = () => {
+  const [inputGroups, setInputGroups] = useState([{ id: 1 }, { id: 2 }]);
+  const [departureAirports, setDepartureAirports] = useState([{ name: '', code: '' }, { name: '', code: '' }]);
+  const [arrivalAirports, setArrivalAirports] = useState([{ name: '', code: '' }, { name: '', code: '' }]);
+  const [departureDates, setDepartureDates] = useState(['', '']);
+  const [dropdownData, setDropdownData] = useState({ from: [], to: [] });
+  const [focus, setFocus] = useState({ from: null, to: null });
+  const dropdownRef = useRef(null);
+  const router = useRouter(); 
 
-  const [fromInput, setFromInput] = useState(''); // Track user's input for "From"
-  const [toInput, setToInput] = useState('');
-  const [fromList, setFromList] = useState([]);
-  const [toList, setToList] = useState([]);
-  const [fromCity, setFromCity] = useState('Select a city');
-  const [fromAirportName, setFromAirportName] = useState('');
+  // Updated customIndexList with the new structure
+  const customIndexList = [
+    { code: "DAC", index: 1 },
+    { code: "CGP", index: 2 },
+    { code: "CXB", index: 3 },
+    { code: "SPD", index: 4 },
+    { code: "ZYL", index: 5 },
+    { code: "RJH", index: 6 },
+    { code: "BZL", index: 7 },
+    { code: "DXB", index: 8 },
+    { code: "JFK", index: 9 },
+    { code: "SIN", index: 10 },
+    // Add more airports with their custom indices
+  ];
 
-  const [toCity, setToCity] = useState('Select a city');
-  const [toAirportName, setToAirportName] = useState('');
-
-  const [isFromInputFocused, setIsFromInputFocused] = useState(false);
-  const [isToInputFocused, setIsToInputFocused] = useState(false);
-
-  const [departureDate, setDepartureDate] = useState('');
+  // Updated customIndexedAirports using the customIndexList
+  const customIndexedAirports = customIndexList
+    .map(({ code, index }) => {
+      const airport = airportDetails.find((a) => a.airportCode === code);
+      return airport ? { ...airport, customIndex: index } : null;
+    })
+    .filter((airport) => airport !== null);
 
   useEffect(() => {
-      // Retrieve stored data from localStorage when the component mounts
-      const storedFromCode = localStorage.getItem('fromCode');
-      const storedToCode = localStorage.getItem('toCode');
-      const storedDepartureDate = localStorage.getItem('departureDate');
-      const storedFromCity = localStorage.getItem('fromCity');
-      const storedFromAirportName = localStorage.getItem('fromAirportName');
-      const storedToCity = localStorage.getItem('toCity');
-      const storedToAirportName = localStorage.getItem('toAirportName');
+    localStorage.setItem('departureAirports', JSON.stringify(['', '']));
+    localStorage.setItem('arrivalAirports', JSON.stringify(['', '']));
+    localStorage.setItem('departureDates', JSON.stringify(['', '']));
+    
+    const storedDepartureAirports = JSON.parse(localStorage.getItem('departureAirports')) || ['', ''];
+    const storedArrivalAirports = JSON.parse(localStorage.getItem('arrivalAirports')) || ['', ''];
+    const storedDepartureDates = JSON.parse(localStorage.getItem('departureDates')) || ['', ''];
 
-      if (storedFromCode) setFromCode(storedFromCode);
-      if (storedToCode) setToCode(storedToCode);
-      if (storedDepartureDate) setDepartureDate(storedDepartureDate);
-      if (storedFromCity) setFromCity(storedFromCity);
-      if (storedFromAirportName) setFromAirportName(storedFromAirportName);
-      if (storedToCity) setToCity(storedToCity);
-      if (storedToAirportName) setToAirportName(storedToAirportName);
+    const loadedDepartureAirports = storedDepartureAirports.map(code => ({ name: '', code }));
+    const loadedArrivalAirports = storedArrivalAirports.map(code => ({ name: '', code }));
+
+    setDepartureAirports(loadedDepartureAirports);
+    setArrivalAirports(loadedArrivalAirports);
+    setDepartureDates(storedDepartureDates);
   }, []);
 
-  // Fetch function for 'From' input
-  const fetchFromData = (value) => {
-      fetch("https://rest-api-airport-details-3e9021974608.herokuapp.com/api/airportdetails")
-          .then((response) => response.json())
-          .then((json) => {
-              const filteredList = json.airportDetails.filter((airport) => {
-                  const valueLowerCase = value.toLowerCase();
-                  const nameLowerCase = airport.airportName.toLowerCase();
-                  const codeLowerCase = airport.airportCode.toLowerCase();
-                  const cityLowerCase = airport.cityName.toLowerCase();
-                  
-                  return (
-                      nameLowerCase.includes(valueLowerCase) ||
-                      codeLowerCase.includes(valueLowerCase) ||
-                      cityLowerCase.includes(valueLowerCase)
-                  );
-              });
-              setFromList(filteredList);
-          })
-          .catch((error) => {
-              console.error('Error fetching data:', error);
-          });
-  };
+  useEffect(() => {
+    const storedDepartureAirports = departureAirports.map(airport => airport.code);
+    localStorage.setItem('departureAirports', JSON.stringify(storedDepartureAirports));
+  }, [departureAirports]);
 
-  // Fetch function for 'To' input
-  const fetchToData = (value) => {
-      fetch("https://rest-api-airport-details-3e9021974608.herokuapp.com/api/airportdetails")
-          .then((response) => response.json())
-          .then((json) => {
-              const filteredList = json.airportDetails.filter((airport) => {
-                  const valueLowerCase = value.toLowerCase();
-                  const nameLowerCase = airport.airportName.toLowerCase();
-                  const codeLowerCase = airport.airportCode.toLowerCase();
-                  const cityLowerCase = airport.cityName.toLowerCase();
-                  
-                  return (
-                      nameLowerCase.includes(valueLowerCase) ||
-                      codeLowerCase.includes(valueLowerCase) ||
-                      cityLowerCase.includes(valueLowerCase)
-                  );
-              });
-              setToList(filteredList);
-          })
-          .catch((error) => {
-              console.error('Error fetching data:', error);
-          });
-  };
+  useEffect(() => {
+    const storedArrivalAirports = arrivalAirports.map(airport => airport.code);
+    localStorage.setItem('arrivalAirports', JSON.stringify(storedArrivalAirports));
+  }, [arrivalAirports]);
 
-  // Handle 'From' input change
-  const handleFromChange = (value) => {
-      setFromInput(value);
-      setFromAirportName(value); // Reflect user's input in the input field
-      fetchFromData(value);
-  };
+  useEffect(() => {
+    localStorage.setItem('departureDates', JSON.stringify(departureDates));
+  }, [departureDates]);
 
-  // Handle 'To' input change
-  const handleToChange = (value) => {
-      setToInput(value);
-      setToAirportName(value); // Reflect user's input in the input field
-      fetchToData(value);
-  };
+  const debouncedFetchFromData = useCallback(_.debounce((value) => {
+    filterData(value, 'from');
+  }, 300), []);
 
-  // Handle 'From' selection from the dropdown
-  const handleFromSelect = (airport) => {
-      setFromCity(airport.cityName);
-      setFromAirportName(airport.airportName);
-      setFromCode(airport.airportCode);
-      setFromInput(''); // Clear the input after selection
-      setFromList([]); // Hide the dropdown after selection
-      setIsFromInputFocused(false); // Hide dropdown when input is deselected
-  };
+  const debouncedFetchToData = useCallback(_.debounce((value) => {
+    filterData(value, 'to');
+  }, 300), []);
 
-  // Handle 'To' selection from the dropdown
-  const handleToSelect = (airport) => {
-      setToCity(airport.cityName);
-      setToAirportName(airport.airportName);
-      setToCode(airport.airportCode);
-      setToInput(''); // Clear the input after selection
-      setToList([]); // Hide the dropdown after selection
-      setIsToInputFocused(false); // Hide dropdown when input is deselected
-  };
-
-  // Handle 'From' input focus
-  const handleFromFocus = () => {
-      setIsFromInputFocused(true);
-      fetchFromData(fromAirportName); // Fetch based on the current input value
-  };
-
-  // Handle 'To' input focus
-  const handleToFocus = () => {
-      setIsToInputFocused(true);
-      fetchToData(toAirportName); // Fetch based on the current input value
-  };
-  
-
-  // Handle 'From' input blur
-  const handleFromBlur = () => {
-      setTimeout(() => setIsFromInputFocused(false), 100);
-  };
-
-  // Handle 'To' input blur
-  const handleToBlur = () => {
-      setTimeout(() => setIsToInputFocused(false), 100);
-  };
-
-  // Handle date change
-  const handleDateChange = (e) => {
-      setDepartureDate(e.target.value);
-  };
-
-  // Handle form submission and storing data in localStorage
-  const handleSearch = () => {
-      localStorage.setItem('fromCode', fromCode);
-      localStorage.setItem('toCode', toCode);
-      localStorage.setItem('departureDate', departureDate);
-      // localStorage.setItem('fromCity', fromCity);
-      // localStorage.setItem('fromAirportName', fromAirportName);
-      // localStorage.setItem('toCity', toCity);
-      // localStorage.setItem('toAirportName', toAirportName);
-
-      // You can also handle further actions here, like submitting the form or navigating to another page
-      console.log('Data stored in localStorage');
-  };
-
-  const handleTravalervisible = () =>{        
-      if(isVisibleTraveler == false){
-          
-          setIsVisibleTraveler(true);
-      }
-      if(isVisibleTraveler == true){
-          
-          setIsVisibleTraveler(false);
-      }
-  }
-  const [totalTraveller,setTotalTraveller] = useState(1);
-  const [isVisibleTraveler, setIsVisibleTraveler] = useState(false);
-
-  const[noOfAdt,setNoOfAdt] = useState(1);  
-  const handleAdultIncrement = () => {
-    if(totalTraveller<9){
-      if(noOfAdt<9){      
-        setNoOfAdt(noOfAdt + 1)
-      }      
+  const filterData = (value, type) => {
+    if (!value) {
+      setDropdownData((prevState) => ({ ...prevState, [type]: customIndexedAirports }));
+      return;
     }
-    else{
-      window.alert("Maximum limit reached!");
+
+    const filteredList = airportDetails.filter((airport) => {
+      const valueLowerCase = value.toLowerCase();
+      const nameLowerCase = airport.airportName.toLowerCase();
+      const codeLowerCase = airport.airportCode.toLowerCase();
+      const cityLowerCase = airport.cityName.toLowerCase();
+      const countryLowerCase = airport.countryName.toLowerCase();
+
+      return (
+        nameLowerCase.includes(valueLowerCase) ||
+        codeLowerCase.includes(valueLowerCase) ||
+        cityLowerCase.includes(valueLowerCase) ||
+        countryLowerCase.includes(valueLowerCase)
+      );
+    });
+
+    setDropdownData((prevState) => ({ ...prevState, [type]: filteredList }));
+  };
+
+  const handleDepartureCityChange = (index, value) => {
+    const updatedAirports = [...departureAirports];
+    updatedAirports[index] = { name: value, code: '' };
+    setDepartureAirports(updatedAirports);
+    debouncedFetchFromData(value);
+  };
+
+  const handleArrivalCityChange = (index, value) => {
+    const updatedAirports = [...arrivalAirports];
+    updatedAirports[index] = { name: value, code: '' };
+    setArrivalAirports(updatedAirports);
+    debouncedFetchToData(value);
+  };
+
+  const handleDepartureDateChange = (index, value) => {
+    const today = new Date().toISOString().split('T')[0]; // Get today's date in 'YYYY-MM-DD' format
+    if (value >= today) { // Only accept dates from today onwards
+      const updatedDates = [...departureDates];
+      updatedDates[index] = value;
+      setDepartureDates(updatedDates);
     }
   };
-  const handleAdultDecrement = () => {
-    if(noOfAdt>1){      
-      setNoOfAdt(noOfAdt - 1);
-    }else{
-      window.alert("MInimun limit reached!");
-    }
-  }
-  const handleChangeAdult = (e) => {
-    const newValue = parseInt(e.target.value);
-    setNoOfAdt(newValue >= 0 ? newValue : 0);    
+
+  const handleFromSelect = (index, airport) => {
+    const updatedAirports = [...departureAirports];
+    updatedAirports[index] = { name: airport.airportName, code: airport.airportCode };
+    setDepartureAirports(updatedAirports);
+    setFocus((prevState) => ({ ...prevState, from: null }));
   };
 
-  const[noOfChildren,setNoOfChildren] = useState(0); 
-  const handleChildrenIncrement = () => {
-    if(totalTraveller<9){
-      if(noOfChildren<9){      
-        setNoOfChildren(noOfChildren + 1)
-      }
-    }    
-    else{
-      window.alert("Maximum limit reached!");
-    }
-  };
-  const handleChildrenDecrement = () => {    
-      if(noOfChildren>0){      
-        setNoOfChildren(noOfChildren - 1);
-      }else{
-      window.alert("MInimun limit reached!");
-    }
-  }
-  const handleChangeChildren = (e) => {
-    const newValue = parseInt(e.target.value);
-    setNoOfChildren(newValue >= 0 ? newValue : 0);
-    
+  const handleToSelect = (index, airport) => {
+    const updatedAirports = [...arrivalAirports];
+    updatedAirports[index] = { name: airport.airportName, code: airport.airportCode };
+    setArrivalAirports(updatedAirports);
+    setFocus((prevState) => ({ ...prevState, to: null }));
   };
 
-  const[noOfKids,setNoOfKids] = useState(0);
-  const handleKidsIncrement = () => {
-    if(totalTraveller<9){
-      if(noOfKids<9){      
-        setNoOfKids(noOfKids + 1)
-      }
-    }
-    else{
-      window.alert("Maximum limit reached!");
-    }
-  };
-  const handleKidsDecrement = () => {
-    if(noOfKids>0){      
-      setNoOfKids(noOfKids - 1);
-    }else{
-      window.alert("MInimun limit reached!");
-    }
-  }
-  const handleChangeKids = (e) => {
-    const newValue = parseInt(e.target.value);
-    setNoOfKids(newValue >= 0 ? newValue : 0);
-    
+  const handleAddInputGroup = () => {
+    const newId = inputGroups.length > 0 ? inputGroups[inputGroups.length - 1].id + 1 : 1;
+    setInputGroups([...inputGroups, { id: newId }]);
+    setDepartureAirports([...departureAirports, { name: '', code: '' }]);
+    setArrivalAirports([...arrivalAirports, { name: '', code: '' }]);
+    setDepartureDates([...departureDates, '']);
   };
 
-  const[noOfInfent,setNoOfInfent] = useState(0); 
-  const handleInfentIncrement = () => {
-    if(totalTraveller<9){
-      
-      if(noOfInfent<noOfAdt){      
-        setNoOfInfent(noOfInfent + 1)
-      }
-    }
-    else{
-      window.alert("Maximum limit reached!");
+  const handleDeleteInputGroup = (id) => {
+    if (inputGroups.length > 2) {
+      const groupIndex = inputGroups.findIndex(group => group.id === id);
+
+      const updatedDepartureAirports = [...departureAirports];
+      const updatedArrivalAirports = [...arrivalAirports];
+      const updatedDepartureDates = [...departureDates];
+
+      updatedDepartureAirports.splice(groupIndex, 1);
+      updatedArrivalAirports.splice(groupIndex, 1);
+      updatedDepartureDates.splice(groupIndex, 1);
+
+      setDepartureAirports(updatedDepartureAirports);
+      setArrivalAirports(updatedArrivalAirports);
+      setDepartureDates(updatedDepartureDates);
+
+      const updatedInputGroups = inputGroups.filter(group => group.id !== id);
+      setInputGroups(updatedInputGroups);
     }
   };
-  const handleInfentDecrement = () => {
-    if(noOfInfent>0){      
-      setNoOfInfent(noOfInfent - 1);
-    }else{
-      window.alert("MInimun limit reached!");
+
+  const handleToggleFocus = (type, index) => {
+    if (focus[type] === index) {
+      // If already focused, toggle off
+      setFocus({ from: null, to: null });
+    } else {
+      // Otherwise, focus on the new field and load dropdown data
+      setFocus({ from: type === 'from' ? index : null, to: type === 'to' ? index : null });
+      setDropdownData((prevState) => ({ ...prevState, [type]: customIndexedAirports }));
     }
-  }
-  const handleChangeInfent = (e) => {
-    const newValue = parseInt(e.target.value);
-    setNoOfInfent(newValue >= 0 ? newValue : 0);
-    
-  }; 
+  };
 
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setFocus({ from: null, to: null });
+    }
+  };
 
-
- 
-    const [items, setItems] = useState(['']);
-
-    const addItem = () => {
-        const newItem = <MultiPart/>;
-        setItems([...items, newItem]);
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
     };
-    const deleteItem = (index) => {
-      const updatedItems = items.filter((item, i) => i !== index);
-      setItems(updatedItems);
+  }, []);
+
+  const handleSearchFlight = () => {
+    // Check if any of the required state variables are empty
+    if (departureAirports.some(airport => airport.name === '') ||
+        arrivalAirports.some(airport => airport.name === '') ||
+        departureDates.some(date => date === '')) {
+      alert('Please fill in all fields.');
+    } else {
+      localStorage.setItem('show', "true");
+      // Navigate to the search result page
+      router.push('./../../../pages/searchResult');
+    }
   };
-  
+
   return (
-    <div className='relative '>
-        <div className='w-28 flex bg-white text-black text-sm justify-center border p-0.5 mb-1 rounded cursor-pointer'>
-            <div>
-                <p className='' onClick={handleTravalervisible}>{totalTraveller} Travelar</p>
+    <div className='py-1 text-black'>
+      <div className=' py-1 rounded shadow-md'>
+        {inputGroups.map((group, index) => (
+          <div key={group.id} className='flex flex-wrap mb-4 relative gap-x-1'>
+            <div className='flex-1 relative mb-4 sm:mb-0'>
+              <input
+                type="text"
+                className='mr-2 w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 h-[50px]'
+                placeholder={`Departure city for group ${group.id}`}
+                value={departureAirports[index].name || ''}
+                onChange={(e) => handleDepartureCityChange(index, e.target.value)}
+                onClick={() => handleToggleFocus('from', index)}
+              />
+              {focus.from === index && dropdownData.from.length > 0 && (
+                <div ref={dropdownRef} className='max-h-[300px] w-full bg-white shadow-md absolute top-full left-0 overflow-y-auto z-10'>
+                  <ul>
+                    {dropdownData.from.map((airport) => (
+                  <div
+                    key={airport.airportCode}
+                    className="bg-blue-50 cursor-pointer hover:bg-blue-100"
+                    onMouseDown={() => handleFromSelect(index, airport)}
+                  >
+                    <div className="bg-white py-1 px-2 border rounded-lg overflow-hidden">
+                      <div className="flex justify-between">
+                        <div className="text-start">
+                          <p className="mb-2 text-gray-500 text-xs font-light">
+                            {airport.cityName}
+                          </p>
+                          <p className="mb-1 text-sm font-semibold text-black">
+                            {airport.airportName}
+                          </p>
+                        </div>
+                        <p className="text-gray-500 text-xs font-light">
+                          {airport.airportCode}
+                        </p>
+                        {/* Display the custom index */}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                  </ul>
+                </div>
+              )}
             </div>
-            <div>
-                <MdOutlineKeyboardArrowDown fontSize={20}/>
+            <div className='flex-1 relative mb-4 sm:mb-0'>
+              <input
+                type="text"
+                className='mr-2 w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 h-[50px]'
+                placeholder={`Arrival city for group ${group.id}`}
+                value={arrivalAirports[index].name || ''}
+                onChange={(e) => handleArrivalCityChange(index, e.target.value)}
+                onClick={() => handleToggleFocus('to', index)}
+              />
+              {focus.to === index && dropdownData.to.length > 0 && (
+                <div ref={dropdownRef} className='max-h-[300px] w-full bg-white shadow-md absolute top-full left-0 overflow-y-auto z-10'>
+                  <ul>
+                  {dropdownData.to.map((airport) => (
+                  <div
+                    key={airport.airportCode}
+                    className="bg-blue-50 cursor-pointer hover:bg-blue-100"
+                    onMouseDown={() => handleToSelect(index, airport)}
+                  >
+                    <div className="bg-white py-1 px-2 border rounded-lg overflow-hidden">
+                      <div className="flex justify-between">
+                        <div className="text-start">
+                          <p className="mb-2 text-gray-500 text-xs font-light">
+                            {airport.cityName}
+                          </p>
+                          <p className="mb-1 text-sm font-semibold text-black">
+                            {airport.airportName}
+                          </p>
+                        </div>
+                        <p className="text-gray-500 text-xs font-light">
+                          {airport.airportCode}
+                        </p>
+                        {/* Display the custom index */}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                  </ul>
+                </div>
+              )}
             </div>
-        </div>
-
-        {
-                    isVisibleTraveler && (
-                        <div className="p-6 mx-auto mb-4 bg-white rounded-lg shadow-lg max-w-80 absolute left-[0px] top-[55px]"> 
-                    <div className="mb-2" >
-                        <h4 className="block font-bold text-gray-700">Travelers</h4>
-                        <p>Highest no of travelers 9</p>
-                    </div>
-                    <div className="flex justify-between mb-2 ">
-                        <div>
-                            <label className="block font-bold text-gray-500">Adults</label>
-                            <p className="block text-gray-400 text-xm">12 years and above</p>
-                        </div>
-                        <div className="flex items-center">
-                            <button className="text-3xl font-bold" onClick={handleAdultDecrement}>-</button>
-                            <input type="text" className="w-16 text-center" value={noOfAdt}  onChange={handleChangeAdult}/>
-                            <button className="text-2xl font-bold"  onClick={handleAdultIncrement}>+</button>
-                        </div>
-                    </div>
-
-                    <div className="flex justify-between mb-2">
-                        <div>
-                            <label className="block font-bold text-gray-500">Childrens</label>
-                            <p className="block text-gray-400 text-xm">5 years - under 12 years</p>
-                        </div>
-                        <div className="flex items-center">
-                            <button className="text-3xl font-bold" onClick={handleChildrenDecrement}>-</button>
-                            <input type="text" className="w-16 text-center " value={noOfChildren}  onChange={handleChangeChildren}/>
-                            <button className="text-2xl font-bold" onClick={handleChildrenIncrement}>+</button>
-                        </div>
-                    </div>
-
-                    <div className="flex justify-between mb-2">
-                        <div>
-                            <label className="block font-bold text-gray-500">Kids</label>
-                            <p className="block text-gray-400 text-xm">2 years - under 5 years</p>
-                        </div>
-                        <div className="flex items-center">
-                            <button className="text-3xl font-bold" onClick={handleKidsDecrement}>-</button>
-                        <input type="text" className="w-16 text-center " value={noOfKids} onChange={handleChangeKids}/>
-                            <button className="text-2xl font-bold" onClick={handleKidsIncrement}>+</button>
-                        </div>
-                    </div>
-
-                    <div className="flex justify-between">
-                        <div>
-                            <label className="block font-bold text-gray-500">Infent</label>
-                            <p className="block text-gray-400 text-xm">
-                                below 2 years</p>
-                        </div>
-                        <div className="flex items-center">
-                            <button className="text-3xl font-bold" onClick={handleInfentDecrement}>-</button>
-                            <input type="text" className="w-16 text-center " value={noOfInfent} onChange={handleChangeInfent} />
-                            <button className="text-2xl font-bold" onClick={handleInfentIncrement}>+</button>
-                        </div>
-                    </div>
-                        </div>
-                        
-                    )
-                }
-                        
-
-        <div>
-
-        
-          <MultiPart/>
-
-          
-        
-            <ul>
-                {items.map((item, index) => (
-                    <div className='flex '>
-                      <div key={index}>{item}</div>
-
-                      
-                      {index > 0 && (
+            <div className='flex-1'>
+              <input
+                type="date"
+                className='w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 h-[50px]'
+                value={departureDates[index] || ''}
+                onChange={(e) => handleDepartureDateChange(index, e.target.value)}
+              />
+            </div>
+            {inputGroups.length > 2 && (
+              <div className='flex-none ml-2'>
                 <button
-                  className='text-center bg-white text-red-700 w-[100px] h-[50px] flex items-center justify-center cursor-pointer border-black border-[2px]'
-                  onClick={() => deleteItem(index)}
+                  className='px-2 py-2 bg-red-500 text-white rounded h-[50px]'
+                  onClick={() => handleDeleteInputGroup(group.id)}
                 >
                   Delete
                 </button>
-              )}
-                      
-                    </div>
-                ))}
-            </ul>
-
-            <div>
-              <button className='flex ms-auto mt-2 bg-white px-5 py-1' onClick={addItem}>Add Item</button>
-            </div>
-
+              </div>
+            )}
+          </div>
+        ))}
+        <div className='mt-4'>
+          <button
+            className='bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 ms-auto flex'
+            onClick={handleAddInputGroup}
+          >
+            Add More
+          </button>
         </div>
-                          
-                       
-                          
-                        
-                        
+        <button className='bg-green-800 w-[150px] h-[50px] font-bold text-white rounded' onClick={handleSearchFlight}>
+          Search Flights
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default Page;
 
 
-
-                        {/* From Dropdown */}
-                        {isFromInputFocused && fromList.length > 0 && (
-                            <div className='h-[500px] w-[400px] bg-red-500 absolute top-[60px] left-[0px] rounded-lg  overflow-y-scroll'>
-                                <div className=''>
-                                    {fromList.map((e, id) => (
-                                        <div 
-                                            onClick={() => handleFromSelect(e)} 
-                                            className='bg-[#F0F8FF] mb-1 hover:bg-[#68afec] px-3 py-2' 
-                                            key={id}
-                                        >
-                                            <div className='bg-[#FFFFFF] py-2 ps-3 pe-5 border rounded-lg overflow-hidden'>
-                                                <div className='flex justify-between items-center'>
-                                                    <div>
-                                                        <p className='mb-2 text-[#6B6A69] text-sm font-light font-noto'>{e.cityName}</p>
-                                                        <p className='mb-1 text-base font-semibold text-black font-noto'>{e.airportName}</p>
-                                                    </div>
-                                                    <p className='text-[#6B6A69] text-sm font-light font-noto'>{e.airportCode}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* To Dropdown */}
-                        {isToInputFocused && toList.length > 0 && (
-                            <div className='h-[500px] w-[400px] bg-blue-500 absolute top-[60px] left-[258px] rounded-lg  overflow-scroll'>
-                                <div className=''>
-                                    {toList.map((e, id) => (
-                                        <div 
-                                            onClick={() => handleToSelect(e)} 
-                                            className='bg-[#F0F8FF] mb-1 hover:bg-[#68afec] px-3 py-2' 
-                                            key={id}
-                                        >
-                                            <div className='bg-[#FFFFFF] py-2 ps-3 pe-5 border rounded-lg overflow-hidden'>
-                                                <div className='flex justify-between items-center'>
-                                                    <div>
-                                                        <p className='mb-2 text-[#6B6A69] text-sm font-light font-noto'>{e.cityName}</p>
-                                                        <p className='mb-1 text-base font-semibold text-black font-noto'>{e.airportName}</p>
-                                                    </div>
-                                                    <p className='text-[#6B6A69] text-sm font-light font-noto'>{e.airportCode}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-                    </div>
-  )
-}
-
-export default Multicity
