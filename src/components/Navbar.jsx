@@ -7,7 +7,7 @@ import { logout } from "@/redux/authSlice";
 import logo from "@/assets/homepage/logo.png";
 import Login from "@/components/singIn/Login";
 import userProfile from "../../public/profile.png";
-import authStates from "../redux/allSelector";
+import { authStates } from "@/redux/allSelector";
 const Navbar = () => {
     const dispatch = useDispatch();
     const { isLoggedIn, email } = useSelector(authStates);
