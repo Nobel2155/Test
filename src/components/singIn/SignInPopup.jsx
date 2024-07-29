@@ -178,7 +178,7 @@ function SignInPopup({ setIsSignInOpen, setIsSignUpOpen }) {
                         </div>
                         <div className='mt-2 text-center'>
                             <p className='text-sm'>
-                                Don't have an account?
+                                Don&apos;t have an account?
                                 <a
                                     onClick={toggleSignUpPopup}
                                     href='#'
