@@ -298,11 +298,7 @@ const HotelCard = () => {
                                 data-aos='fade-up'
                                 className='w-[228px] h-[300px] mx-auto group bg-white shadow-md rounded-md overflow-hidden'
                             >
-                                <Image
-                                    src={atlantis}
-                                    alt='Apartment'
-                                    className='w-full h-[138px] group-hover:scale-105 duration-500 object-cover roundedt-md outline-none'
-                                />
+
 
                                 <div className='p-3'>
                                     <div>
