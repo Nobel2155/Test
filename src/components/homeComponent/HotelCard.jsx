@@ -313,7 +313,7 @@ const HotelCard = () => {
                         </div>
                       </div>
                       <p className="text-[10px] text-[#7A7A7A]">
-                      An entertainment destination unlike any other,Atlantis Dubai is beyond anything you've ever imagined.
+                      An entertainment destination unlike any other,Atlantis Dubai is beyond anything you&apos;ve ever imagined.
                       </p>
                     </div>
 
