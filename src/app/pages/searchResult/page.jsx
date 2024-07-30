@@ -1,46 +1,49 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import AirlineTable from "../../../components/searchResult/AirlineTable";
-import { useRouter } from "next/navigation";
-import Graph from "../../../components/searchResult/Graph";
+ 'use client';
+import React, { useEffect, useState } from 'react';
+import AirlineTable from '../../../components/searchResult/AirlineTable';
+import { useRouter } from 'next/navigation'; 
+import Graph from "../../../components/searchResult/Graph"
 const SearchResult = () => {
-    const [show, setShow] = useState("");
-    const router = useRouter(); // Initialize the router for navigation
+  const [show, setShow] = useState('');
+  const router = useRouter();  // Initialize the router for navigation
 
-    useEffect(() => {
-        const storedShow = localStorage.getItem("show");
+  useEffect(() => {
+    const storedShow = localStorage.getItem('show');
 
-        if (storedShow) {
-            setShow(storedShow);
-        } else {
-            setShow("false"); // Default to 'false' if no value in localStorage
-        }
-    }, []);
-
-    // Immediately redirect if 'show' is 'false'
-    useEffect(() => {
-        if (show === "false") {
-            router.push("/"); // Use router.push for navigation
-        }
-    }, [show, router]); // Include router in dependencies to avoid warnings
-
-    // Early return if navigating to prevent rendering content
-    if (show === "false") {
-        return null;
+    if (storedShow) {
+      setShow(storedShow);
+    } else {
+      setShow('false');  // Default to 'false' if no value in localStorage
     }
+  }, []);
 
-    return (
-        <div className='lg:max-w-[1200px] mx-auto mt-[60px]'>
-            <Graph />
-            <div className='flex items-start gap-5 pt-5'>
-                {/* <Filter/> */}
-                <AirlineTable />
-            </div>
-        </div>
-    );
+
+  // Immediately redirect if 'show' is 'false'
+  useEffect(() => {
+    if (show === 'false') {
+      router.push('/');  // Use router.push for navigation
+    }
+  }, [show, router]);  // Include router in dependencies to avoid warnings
+
+  // Early return if navigating to prevent rendering content
+  if (show === 'false') {
+    return null;
+  }
+
+  return (
+    <div className="lg:max-w-[1200px] mx-auto mt-[60px]">
+          <Graph/>
+      <div className="flex items-start gap-5 pt-5">
+         {/* <Filter/> */}
+        <AirlineTable/>
+      </div>
+    </div>
+  );
 };
 
 export default SearchResult;
+
+
 
 // 'use client';
 // import React, { useEffect, useState } from 'react';
@@ -108,6 +111,7 @@ export default SearchResult;
 // };
 
 // export default SearchResult;
+
 
 // 'use client';
 // import React, { useEffect, useState } from 'react';

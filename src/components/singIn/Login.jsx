@@ -3,10 +3,10 @@ import React, { useState } from "react";
 import SignInPopup from "./SignInPopup";
 import SignUpPopup from "./SignUpPopup";
 
-function Login() {
+function Login() { 
     const [isSignInOpen, setIsSignInOpen] = useState(false);
     const [isSignUpOpen, setIsSignUpOpen] = useState(false);
-  
+    
     return (
       <div>
         <button 
