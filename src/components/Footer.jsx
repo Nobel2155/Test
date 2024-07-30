@@ -27,7 +27,7 @@ const Footer = () => {
                 <Image src={logo} alt="" />
               </div>
               <span className="self-center text-xl font-semibold">
-                HAMS AVIATION
+                HAMS Fly Limited
               </span>
             </a>
             <div className="w-[290px] mt-5">
