@@ -1,21 +1,23 @@
-import React from "react";
+import React from 'react'
 
 const ModifyTrip = () => {
-    return (
-        <div className='flex mb-2 gap-7  text-black'>
-            <div className='flex items-center gap-1 relative cursor-pointer'>
-                <input
-                    // onClick={oneWay}
-                    value='oneway'
-                    defaultChecked
-                    type='radio'
-                    name='transport'
-                    id=''
-                />
-                <p className='text-sm  font-medium '>One Way</p>
-            </div>
+  return (
+    <div className="flex mb-2 gap-7  text-black">
+      <div className="flex items-center gap-1 relative cursor-pointer">
+        <input
+          // onClick={oneWay}
+          value="oneway"
+          defaultChecked
+          type="radio"
+          name="transport"
+          id=""
+        />
+        <p className="text-sm  font-medium ">
+          One Way
+        </p>
+      </div>
 
-            {/* <div className="flex items-center gap-1 relative cursor-pointer">
+      {/* <div className="flex items-center gap-1 relative cursor-pointer">
         <input
           // onClick={roundWay}
           value="Round way"
@@ -40,8 +42,8 @@ const ModifyTrip = () => {
           Multi City
         </p>
       </div> */}
-        </div>
-    );
-};
+  </div>
+  )
+}
 
-export default ModifyTrip;
+export default ModifyTrip

@@ -1,4 +1,4 @@
-const { createProxyMiddleware } = require('http-proxy-middleware');
+ const { createProxyMiddleware } = require('http-proxy-middleware');
 module.exports = {
   // Add a proxy middleware for the API
   async rewrites() {
