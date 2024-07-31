@@ -40,7 +40,7 @@ const PassengerCount = () => {
     setTravelerCounts((prevCounts) => {
       const newCount = prevCounts[type] + increment;
       if (newCount < 1 || (totalTraveler >= 100 && increment > 0)) {
-        // alert(`Cannot ${increment > 1 ? 'increment' : 'decrement'} ${type}!`);
+        // toast.error(`Cannot ${increment > 1 ? 'increment' : 'decrement'} ${type}!`);
         return prevCounts;
       }
       return { ...prevCounts, [type]: newCount };

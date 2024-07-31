@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import _ from 'lodash';
 import airportDetails from '@/dataSet/airportDetails'; 
 import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 
 const Page = () => {
   // Initialize with two groups
@@ -210,7 +211,7 @@ const Page = () => {
     if (departureAirports.some(airport => airport.name === '') ||
         arrivalAirports.some(airport => airport.name === '') ||
         departureDates.some(date => date === '')) {
-      alert('Please fill in all fields.');
+      toast.warning('Please fill in all fields.');
     } else {
       localStorage.setItem('show', "true");
       // Navigate to the search result page
