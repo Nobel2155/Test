@@ -23,11 +23,11 @@ const Footer = () => {
               href="#"
               className="flex justify-center space-x-3 lg:justify-start"
             >
-              <div className="flex items-center justify-center w-12 h-12 rounded-full dark:bg-violet-600">
+              <div className="flex items-center justify-center w-12 h-12 rounded-full">
                 <Image src={logo} alt="" />
               </div>
               <span className="self-center text-xl font-semibold">
-                HAMS AVIATION
+                HAMS Fly Limited
               </span>
             </a>
             <div className="w-[290px] mt-5">
@@ -73,7 +73,7 @@ const Footer = () => {
             </div>
             <div className="space-y-3">
               <div>
-                <h3 className="tracking-wide uppercase font-bold dark:text-gray-900">
+                <h3 className="tracking-wide uppercase font-bold text-white">
                   About Us
                 </h3>
                 <ul className="space-y-1 gap-2 mt-2">
@@ -102,13 +102,13 @@ const Footer = () => {
               </div>
             </div>
             <div className="space-y-3">
-              <h3 className="uppercase dark:text-gray-900">Authorized By</h3>
+              <h3 className="uppercase text-white">Authorized By</h3>
               <div className="text-7xl text-blue-500">
                 <SiIata />
               </div>
             </div>
             <div className="space-y-3">
-              <div className="uppercase dark:text-gray-900">Social media</div>
+              <div className="uppercase text-white">Social media</div>
               <div className="flex justify-start space-x-3">
                 <a
                   rel="noopener noreferrer"
@@ -144,7 +144,7 @@ const Footer = () => {
               <Newsletter />
             </div>
             <div className="space-y-3">
-              <div className="uppercase dark:text-gray-900">Payment Method</div>
+              <div className="uppercase text-white">Payment Method</div>
               <div className="flex gap-x-1">
                 <div className="">
                   <Image src={bkash} alt="" className="w-12" />
