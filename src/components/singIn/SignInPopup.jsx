@@ -160,7 +160,7 @@ function SignInPopup({ setIsSignInOpen, setIsSignUpOpen }) {
                 type="submit"
                 disabled={isDisabled}
               >
-                {isDisabled ? "Loading . . ." : "Login"}
+                {isDisabled ? "Loading..." : "Login"}
               </button>
             </div>
             <div className="mt-2 text-center">
