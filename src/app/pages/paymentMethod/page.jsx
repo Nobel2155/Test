@@ -11,6 +11,7 @@ import NagadForm from "@/components/paymentMethod/NagadForm";
 import BankForm from "@/components/paymentMethod/BankForm";
 import BankList from "@/components/paymentMethod/BankList";
 import { useSelector } from "react-redux";
+import config from "../../../config"
 
 const Payment = () => {
   const [selectedOption, setSelectedOption] = useState("default");
@@ -90,7 +91,7 @@ const Payment = () => {
 
         try {
           // Send email to user
-          await axios.post('https://hamsfly-server-v1-0-0.onrender.com/api/send-mail', {
+          await axios.post(`${config.apiUrl}/api/send-mail`, {
             to: passengerData.email,
             subject: "Booking Confirmation",
             text: `Your reservation has been confirmed.
@@ -119,7 +120,7 @@ const Payment = () => {
           });
 
           // Send email to administration
-          await axios.post('https://hamsfly-server-v1-0-0.onrender.com/api/send-mail', {
+          await axios.post(`${config.apiUrl}/api/send-mail`, {
             to: "info@hamsfly.com",
             subject: "New Booking Alert",
             text: `A new booking. booking reference: HAMS${passengerData.ticketNumber} `,

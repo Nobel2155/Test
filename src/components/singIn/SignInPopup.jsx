@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { login } from "@/redux/authSlice";
 import SocialLogin from "./SocialLogin";
 import SignUpPopup from "./SignUpPopup";
+import Spinner from "../components/Spinner";
+import config from "../../config"
 
 function SignInPopup({ setIsSignInOpen, setIsSignUpOpen }) {
   const [isSignUpOpen, setIsSignUpOpenState] = useState(false);
@@ -57,7 +59,7 @@ function SignInPopup({ setIsSignInOpen, setIsSignUpOpen }) {
 
     try {
       const response = await axios.post(
-        "https://hamsfly-server-v1-0-0.onrender.com/api/auth/login",
+        `${config.apiUrl}/api/auth/login`,
         {
           email: formData.emailOrPhone,
           password: formData.password,
@@ -72,7 +74,13 @@ function SignInPopup({ setIsSignInOpen, setIsSignUpOpen }) {
       console.log("Login successful:", response.data);
 
       // Dispatch the login action with user email and token
-      dispatch(login({ user: response.data.user, email: response.data.email, token: response.data.token }));
+      dispatch(
+        login({
+          user: response.data.user,
+          email: response.data.email,
+          token: response.data.token,
+        })
+      );
 
       setIsSignInOpen(false);
     } catch (error) {
@@ -156,11 +164,15 @@ function SignInPopup({ setIsSignInOpen, setIsSignUpOpen }) {
             <div className="flex gap-1 items-center text-base w-[260px]"></div>
             <div>
               <button
-                className="w-full bg-[#00703E] py-2 rounded text-white hover:bg-green-700"
+                 className={`w-full py-2 rounded text-white ${
+                  isDisabled
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-[#00703E] hover:bg-green-700"
+                }`}
                 type="submit"
                 disabled={isDisabled}
               >
-                {isDisabled ? "Loading..." : "Login"}
+                {isDisabled ?  <Spinner /> : "Login"}
               </button>
             </div>
             <div className="mt-2 text-center">

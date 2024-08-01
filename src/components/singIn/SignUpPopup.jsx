@@ -1,7 +1,8 @@
-"use client"
+"use client";
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import SocialLogin from "./SocialLogin";
+import Spinner from "../components/Spinner";
 
 function SignUpPopup({ setIsSignUpOpen, setIsSignInOpen }) {
   const [formData, setFormData] = useState({
@@ -93,7 +94,9 @@ function SignUpPopup({ setIsSignUpOpen, setIsSignInOpen }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div ref={popupRef} className="bg-white rounded shadow-lg w-[480px] flex lg:flex-row md:flex-col flex-col items-start justify-around"
+      <div
+        ref={popupRef}
+        className="bg-white rounded shadow-lg w-[480px] flex lg:flex-row md:flex-col flex-col items-start justify-around"
       >
         <form
           onSubmit={showOtpForm ? handleOtpSubmit : handleFormSubmit}
@@ -145,25 +148,32 @@ function SignUpPopup({ setIsSignUpOpen, setIsSignInOpen }) {
                       checked={formData.agreeTerms}
                       onChange={handleInputChange}
                     />
-                    <span className="text-sm">I agree to the Terms & Condition</span>
+                    <span className="text-sm">
+                      I agree to the Terms & Condition
+                    </span>
                   </div>
                 </div>
                 <div>
                   <button
-                    className={`w-full py-2 rounded text-white ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#00703E] hover:bg-green-700'}`}
+                    className={`w-full py-2 rounded text-white ${
+                      loading
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-[#00703E] hover:bg-green-700"
+                    }`}
                     type="submit"
                     disabled={loading}
                   >
-                    {loading ? "Registering..." : "Register"}
+                    {loading ? <Spinner /> : "Register"}
                   </button>
                 </div>
                 <div className="text-center mt-2">
-                  <p className="text-sm">Already have an account?   
+                  <p className="text-sm">
+                    Already have an account?
                     <a
                       onClick={(e) => {
                         e.preventDefault();
                         setIsSignInOpen(true);
-                        setIsSignUpOpen(false); 
+                        setIsSignUpOpen(false);
                       }}
                       href="#"
                       className="text-[#00703E]"
@@ -174,10 +184,14 @@ function SignUpPopup({ setIsSignUpOpen, setIsSignInOpen }) {
                 </div>
                 <div>
                   {successMessage && (
-                    <div className="font-xs text-green-500 mb-1">{successMessage}</div>
+                    <div className="font-xs text-green-500 mb-1">
+                      {successMessage}
+                    </div>
                   )}
                   {errorMessage && (
-                    <div className="font-xs text-red-500 mb-4">{errorMessage}</div>
+                    <div className="font-xs text-red-500 mb-4">
+                      {errorMessage}
+                    </div>
                   )}
                 </div>
                 <SocialLogin />
@@ -200,7 +214,11 @@ function SignUpPopup({ setIsSignUpOpen, setIsSignInOpen }) {
                 </div>
                 <div>
                   <button
-                    className={`w-full py-2 rounded text-white ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#00703E] hover:bg-green-700'}`}
+                    className={`w-full py-2 rounded text-white ${
+                      loading
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-[#00703E] hover:bg-green-700"
+                    }`}
                     type="submit"
                     disabled={loading}
                   >
@@ -209,10 +227,14 @@ function SignUpPopup({ setIsSignUpOpen, setIsSignInOpen }) {
                 </div>
                 <div>
                   {successMessage && (
-                    <div className="font-xs text-green-500 mb-1">{successMessage}</div>
+                    <div className="font-xs text-green-500 mb-1">
+                      {successMessage}
+                    </div>
                   )}
                   {errorMessage && (
-                    <div className="font-xs text-red-500 mb-4">{errorMessage}</div>
+                    <div className="font-xs text-red-500 mb-4">
+                      {errorMessage}
+                    </div>
                   )}
                 </div>
               </div>
