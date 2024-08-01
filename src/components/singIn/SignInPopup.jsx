@@ -167,11 +167,15 @@ function SignInPopup({ setIsSignInOpen, setIsSignUpOpen }) {
                 type="submit"
                 disabled={isLoading}
               >
+
                 {isLoading ? (
                   <FaSpinner className="animate-spin" size={20} />
                 ) : (
                   "Login"
                 )}
+
+
+
               </button>
             </div>
             <div className="mt-2 text-center">

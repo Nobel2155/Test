@@ -22,8 +22,8 @@ function TableRow() {
         <div className="w-[90px]">
           <Link href="/pages/paymentMethod">
             <p className="text-[#039BE6]">
-            pay now
-          </p>
+              Pay Now
+            </p>
           </Link>
         </div>
       </div>

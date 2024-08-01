@@ -8,6 +8,7 @@ import baggage from "@/assets/bookFlights/baggage.png";
 import { useRouter } from 'next/navigation';
 import { useDispatch } from 'react-redux';
 import { setPassengerData } from '../../redux/authSlice';
+import { toast } from 'react-toastify';
 
 const BookForm = () => {
 
@@ -49,7 +50,7 @@ const BookForm = () => {
     });
   
     if (hasErrors) {
-      alert("Please fill in all the required fields.");
+      toast.warning("Please fill in all the required fields.");
       return;
     }
     setLoading(true);

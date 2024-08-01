@@ -126,7 +126,7 @@ const Payment = () => {
           });
 
           // Redirect to the dashboard page
-          router.push("/pages/dashboardPage");
+          router.push("/pages/ticket");
         } catch (error) {
           console.error("Failed to send email:", error);
         } finally {

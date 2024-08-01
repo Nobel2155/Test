@@ -5,6 +5,7 @@ import airportDetails from '@/dataSet/airportDetails'; // Import the local data
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import ModifyTravelarCounter from "@/components/searchResult/modifyTrip/ModifyTravelarCounter"
+import { toast } from 'react-toastify';
 const ModifyOnWay = () => {
   const [inputGroups, setInputGroups] = useState([{ id: 1 }]);
   const [departureAirports, setDepartureAirports] = useState([{ name: '', code: '' }]);
@@ -161,7 +162,7 @@ const ModifyOnWay = () => {
     if (departureAirports.some(airport => airport.name === '') ||
         arrivalAirports.some(airport => airport.name === '') ||
         departureDates.some(date => date === '')) {
-      alert('Please fill in all fields.');
+      toast.warning('Please fill in all fields.');
     } else {
       window.location.reload();
     }
