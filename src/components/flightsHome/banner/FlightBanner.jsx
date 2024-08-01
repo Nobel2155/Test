@@ -1,6 +1,12 @@
 import TravelarCounter from "@/components/homeComponent/banner/TravelarCounter";
 import { IoIosSearch } from "react-icons/io";
 import { LiaPlaneDepartureSolid } from "react-icons/lia";
+import usBangla from "../../../assets/flightsHome/usBangla.png";
+import bimanbd from "../../../assets/flightsHome/biman-bangla.png";
+import emirates from "../../../assets/flightsHome/emirates.png";
+import qatarAirways from "../../../assets/flightsHome/qatar-airways.png";
+import singaporeAir from "../../../assets/flightsHome/singapore-airlines.png";
+import Image from "next/image";
 
 const FlightBanner = () => {
   const bannerStyle = {
@@ -21,7 +27,7 @@ const FlightBanner = () => {
         width: "full",
       }}
     >
-      <div className="absolute inset-0 bg-black/75 flex flex-col items-center justify-center">
+      <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center">
         <div className="text-white text-center mt-5 space-y-4">
           <h1 className="lg:text-4xl md:text-2xl text-lg font-semibold lg:block md:block hidden">
             Finds a cheapest flight with right price
@@ -29,7 +35,7 @@ const FlightBanner = () => {
           <p className="lg:text-lg md:text-sm lg:block md:block hidden font-medium">
             Best Flight deal to around the globe
           </p>
-          <div className="w-auto bg-black/50 mx-auto py-8 px-40 rounded">
+          <div className="w-auto bg-black/50 mx-auto py-6 px-40 rounded">
             <div className=" ">
               <div>
                 <div>
@@ -46,7 +52,7 @@ const FlightBanner = () => {
                       <p className="text-sm text-white font-medium ">One Way</p>
                     </div>
 
-                    <div className="flex items-center gap-1 relative cursor-pointer">
+                    <div className="flex items-center  gap-1 relative cursor-pointer">
                       <input
                         // onClick={roundWay}
                         value="Round way"
@@ -76,7 +82,7 @@ const FlightBanner = () => {
                     <TravelarCounter />
                   </div>
                 </div>
-                <div className="flex gap-3 pt-2">
+                <div className="flex gap-3 pt-2 text-black">
                   <div>
                     <input
                       type="text"
@@ -102,7 +108,7 @@ const FlightBanner = () => {
                     />
                   </div>
                   <div>
-                    <button className="p-3 rounded-sm bg-[#00703e] px-6">
+                    <button className="p-3 rounded-sm bg-[#00703e] px-6 text-white">
                       Search Flight
                     </button>
                   </div>
@@ -145,6 +151,19 @@ const FlightBanner = () => {
                 </div>
               </div>
             </div>
+          </div>
+
+          <p className="lg:text-lg md:text-sm lg:block md:block hidden font-medium max-w-[500px] mx-auto">
+            Discover with HAMS more than thousand of partners to bring you
+            better travel deals.
+          </p>
+
+          <div className="flex items-center justify-center gap-8 w-full">
+            <Image alt="us-bangla" src={usBangla} />
+            <Image alt="us-bangla" src={emirates} />
+            <Image alt="us-bangla" src={singaporeAir} />
+            <Image alt="us-bangla" src={qatarAirways} />
+            <Image alt="us-bangla" src={bimanbd} />
           </div>
         </div>
       </div>
