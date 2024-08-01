@@ -1,6 +1,7 @@
 'use client'
 import React, { useState, useEffect, useRef } from 'react';
 import { MdOutlineKeyboardArrowDown } from 'react-icons/md';
+import { toast } from 'react-toastify';
 
 const TravelarCounter = () => {
   // State for visibility of traveler dropdown
@@ -40,17 +41,17 @@ const TravelarCounter = () => {
       // Check for conditions to prevent invalid state
       if (type === 'adults' && newCount < 1) {
         newCount = 1;
-        alert('At least one traveler must be selected!');
+        toast.info('At least one traveler must be selected!');
       }
 
       if (newCount < 0 || totalTraveler >= 9 && increment > 0 || type === 'infants' && newCount > prevCounts.adults) {
-        alert(`Cannot ${increment > 0 ? 'increment' : 'decrement'} ${type}!`);
+        toast.error(`Cannot ${increment > 0 ? 'increment' : 'decrement'} ${type}!`);
         return prevCounts;
       }
 
       // Check if there is at least one traveler
       if (totalTraveler === 1 && increment < 0) {
-        alert('At least one traveler must be selected!');
+        toast.info('At least one traveler must be selected!');
         return prevCounts;
       }
 
@@ -64,7 +65,7 @@ const TravelarCounter = () => {
     setTravelerCounts(prevCounts => {
       const newCount = isNaN(parsedValue) ? 0 : Math.max(0, parsedValue);
       if (type === 'adults' && newCount < 1) {
-        alert('At least one traveler must be selected!');
+        toast.info('At least one traveler must be selected!');
         return prevCounts;
       }
       return {

@@ -282,6 +282,8 @@ import airportDetails from '@/dataSet/airportDetails'; // Import the local data
 import Link from 'next/link';
 // import { useRouter } from 'next/router';
 import { useRouter } from 'next/navigation';
+import {  toast } from 'react-toastify';
+
 const Page = () => {
   const [inputGroups, setInputGroups] = useState([{ id: 1 }]);
   const [departureAirports, setDepartureAirports] = useState([{ name: '', code: '' }]);
@@ -446,7 +448,8 @@ const Page = () => {
     if (departureAirports.some(airport => airport.name === '') ||
         arrivalAirports.some(airport => airport.name === '') ||
         departureDates.some(date => date === '')) {
-      alert('Please fill in all fields.');
+      toast.warning('Please fill in all fields.');
+       
     } else {
       localStorage.setItem('show', "true");
       // Navigate to the search result page
