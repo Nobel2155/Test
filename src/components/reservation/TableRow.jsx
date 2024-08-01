@@ -22,7 +22,7 @@ function TableRow() {
         <div className="w-[90px]">
           <Link href="/pages/paymentMethod">
             <p className="text-[#039BE6]">
-            pay now
+            View Ticket
           </p>
           </Link>
         </div>
