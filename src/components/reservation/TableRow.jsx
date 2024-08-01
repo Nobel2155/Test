@@ -20,10 +20,10 @@ function TableRow() {
         <div className="w-[60px] ml-6 mr-2">Unpaid</div>
         <div className="w-[90px] ml-3">17/03/24<br/>04:20pm</div>
         <div className="w-[90px]">
-          <Link href="/pages/ticket">
+          <Link href="/pages/paymentMethod">
             <p className="text-[#039BE6]">
-            View Ticket
-          </p>
+              Pay Now
+            </p>
           </Link>
         </div>
       </div>
