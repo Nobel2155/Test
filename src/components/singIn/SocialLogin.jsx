@@ -10,30 +10,58 @@ import {
   FacebookAuthProvider,
   // AppleAuthProvider,
 } from "firebase/auth";
+import axios from "axios";
+import { useDispatch } from "react-redux";
+import { login } from "@/redux/authSlice";
 
 const googleProvider = new GoogleAuthProvider();
 const facebookProvider = new FacebookAuthProvider();
 // const appleProvider = new AppleAuthProvider();
 
-const handleGoogleLogin = async () => {
-  const result = await signInWithPopup(auth, googleProvider);
-  const user = result.user;
-  console.log(user);
-};
+const SocialLogin = ({ setIsLoading }) => {
+  const dispatch = useDispatch();
+  const handleGoogleLogin = async () => {
+    setIsLoading(true);
+    const result = await signInWithPopup(auth, googleProvider);
+    const user = result.user;
 
-const handleFacebookLogin = async () => {
-  const result = await signInWithPopup(auth, facebookProvider);
-  const user = result.user;
-  console.log(user);
-};
+    try {
+      if (user) {
+        const response = await axios.post(
+          "http://localhost:3002/api/auth/signup",
+          {
+            name: user?.displayName,
+            email: user?.email,
+            photo: user?.photoURL,
+            isSocialLogin: true,
+          }
+        );
+        if (response?.data?.user) {
+          dispatch(
+            login({
+              email: response.data.user.email,
+              token: response.data.token,
+            })
+          );
+          setIsLoading(false);
+        }
+      }
+    } catch (error) {
+      setIsLoading(false);
+    }
+  };
 
-const handleAppleLogin = async () => {
-  // const result = await signInWithPopup(auth, appleProvider);
-  // const user = result.user;
-  // console.log(user);
-};
+  const handleFacebookLogin = async () => {
+    const result = await signInWithPopup(auth, facebookProvider);
+    const user = result.user;
+    console.log(user);
+  };
 
-const SocialLogin = () => {
+  const handleAppleLogin = async () => {
+    // const result = await signInWithPopup(auth, appleProvider);
+    // const user = result.user;
+    // console.log(user);
+  };
   return (
     <fieldset className="border-t mt-5">
       <legend className="text-center text-[#575757] text-base px-2">
