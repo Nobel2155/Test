@@ -2,7 +2,7 @@
 import React from 'react'
 import { useSelector } from 'react-redux';
 
-const ticket = () => {
+const Ticket = () => {
     const passengerData = useSelector((state) => state.auth.passengerData);
   return (
     <div>
@@ -163,4 +163,4 @@ const ticket = () => {
   )
 }
 
-export default ticket
+export default Ticket
