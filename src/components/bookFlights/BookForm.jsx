@@ -9,6 +9,8 @@ import { useRouter } from 'next/navigation';
 import { useDispatch } from 'react-redux';
 import { setPassengerData } from '../../redux/authSlice';
 import { toast } from 'react-toastify';
+import Spinner from '../components/Spinner';
+import config from '../../config';
 
 const BookForm = () => {
 
@@ -63,7 +65,7 @@ const BookForm = () => {
     };
   
     try {
-      const response = await fetch('https://hamsfly-server-v1-0-0.onrender.com/api/users', requestOptions);
+      const response = await fetch(`${config.apiUrl}/api/users`, requestOptions);
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
@@ -183,7 +185,7 @@ const BookForm = () => {
    };
 
   return (
-    <form>
+    <form onSubmit={handleBookNow}>
       <div className="pt-[30px] flex gap-2 flex-col">
         <Title title="Select Title*" />
         <div className="flex gap-[10px]">
@@ -353,7 +355,7 @@ const BookForm = () => {
             </div>
           </div>
         </div>
-        <div className="w-full md:max-w-[400px] rounded-xl p-4 border border-[#E9E8FC] lg:flex flex-col gap-1">
+        <div className="w-full md:max-w-[400px] rounded-xl mt-5 p-4 border border-[#E9E8FC] lg:flex flex-col gap-1">
           <Airlines />
           <hr />
           <Airlines />
@@ -488,12 +490,11 @@ const BookForm = () => {
             </div>
             <div className="text-base font-normal flex gap-9">
               <button
-                type="button"
-                onClick={handleBookNow}
-                className={`py-2 px-7 border rounded text-white ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#00703E] hover:bg-green-700'}`}
+                type="submit" 
+                className={`py-2 px-7 border rounded text-white w-40 ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#00703E] hover:bg-green-700'}`}
                 disabled={loading}
               >
-                 {loading ? 'Buy Now' : 'Buy Now'}  
+                 {loading ? <Spinner /> : 'Buy Now'}  
               </button>
               {/* <button
                 type="button"

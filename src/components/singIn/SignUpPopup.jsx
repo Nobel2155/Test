@@ -1,7 +1,8 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import SocialLogin from "./SocialLogin";
-import globalAxiosURL from "../../hooks/globalAxiosURL";
+import Spinner from "../components/Spinner";
+import globalAxiosURL from "@/hooks/globalAxiosURL";
 
 function SignUpPopup({ setIsSignUpOpen, setIsSignInOpen }) {
   const [formData, setFormData] = useState({
@@ -178,7 +179,7 @@ function SignUpPopup({ setIsSignUpOpen, setIsSignInOpen }) {
                     type="submit"
                     disabled={loading}
                   >
-                    {loading ? "Registering..." : "Register"}
+                    {loading ? <Spinner /> : "Register"}
                   </button>
                 </div>
                 <div className="text-center mt-2">
