@@ -6,6 +6,7 @@ import { login } from "@/redux/authSlice";
 import SocialLogin from "./SocialLogin";
 import SignUpPopup from "./SignUpPopup";
 import { FaSpinner } from "react-icons/fa";
+import globalAxiosURL from "@/hooks/globalAxiosURL";
 
 function SignInPopup({ setIsSignInOpen, setIsSignUpOpen }) {
   const [isSignUpOpen, setIsSignUpOpenState] = useState(false);
@@ -20,6 +21,7 @@ function SignInPopup({ setIsSignInOpen, setIsSignUpOpen }) {
   const popupRef = useRef(null);
   const dispatch = useDispatch();
   const { isLoggedIn } = useSelector((state) => state.auth);
+  const axiosURL = globalAxiosURL();
 
   const toggleSignUpPopup = (e) => {
     e.preventDefault();
@@ -49,20 +51,17 @@ function SignInPopup({ setIsSignInOpen, setIsSignUpOpen }) {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true)
+    setIsLoading(true);
     if (!validateForm()) {
       setIsLoading(false);
       return;
     }
 
     try {
-      const response = await axios.post(
-        "http://localhost:3002/api/auth/login",
-        {
-          email: formData.emailOrPhone,
-          password: formData.password,
-        }
-      );
+      const response = await axiosURL.post("/auth/login", {
+        email: formData.emailOrPhone,
+        password: formData.password,
+      });
       setSuccessMessage("Login successful!");
       setErrorMessage("");
       setFormData({
