@@ -4,7 +4,7 @@ import PassengerInfo from "../../../components/bookFlights/PassengerInfo";
 
 const bookFlights = () => {
   return (
-    <div className="max-w-[1200px] mx-auto px-[120px] py-10 text-[#282828]">
+    <div className="max-w-[1200px] mx-auto px-4 md:px-10 lg:px-[120px] py-10 text-[#282828]">
       <PassengerInfo />
       <BookForm />
     </div>

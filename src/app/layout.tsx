@@ -1,5 +1,5 @@
 "use client";
-import React, { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect } from "react";
 import { Provider, useDispatch } from "react-redux";
 import { store } from "../redux/store";
 import "./globals.css";

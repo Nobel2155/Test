@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import SocialLogin from "./SocialLogin";
 import Spinner from "../components/Spinner";
+import globalAxiosURL from "@/hooks/globalAxiosURL";
 
 function SignUpPopup({ setIsSignUpOpen, setIsSignInOpen }) {
   const [formData, setFormData] = useState({

@@ -355,7 +355,7 @@ const BookForm = () => {
             </div>
           </div>
         </div>
-        <div className="w-full md:max-w-[400px] rounded-xl p-4 border border-[#E9E8FC] lg:flex flex-col gap-1">
+        <div className="w-full md:max-w-[400px] rounded-xl mt-5 p-4 border border-[#E9E8FC] lg:flex flex-col gap-1">
           <Airlines />
           <hr />
           <Airlines />
