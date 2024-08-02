@@ -12,7 +12,6 @@ import TravelarCounter from "./TravelarCounter";
 import { IoIosSearch } from "react-icons/io";
 // import LoginMsg from "@/components/LoginMsg";
 
-
 const Banner = () => {
   const [oneway, setOneway] = useState(true);
   const [roundway, setRoundway] = useState(false);
@@ -50,10 +49,11 @@ const Banner = () => {
       <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center">
         <div className="text-white text-center mt-5">
           <h1 className="lg:text-4xl md:text-2xl text-lg font-semibold p-1 lg:block md:block hidden">
-          Travel All Over the World with HAMS FLY
+            Travel All Over the World with HAMS FLY
           </h1>
           <p className="lg:text-base md:text-sm lg:block md:block hidden">
-          Save up to 40% on unsold business class fares and get the best Airfare deals with HAMS FLY.
+            Save up to 40% on unsold business class fares and get the best
+            Airfare deals with HAMS FLY.
           </p>
           <div className="relative lg:w-96 md:w-96 w-64 mx-auto lg:top-5 md:top-5">
             <input

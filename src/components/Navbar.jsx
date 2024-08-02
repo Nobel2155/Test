@@ -1,4 +1,4 @@
- "use client";
+"use client";
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { logout } from "@/redux/authSlice";
 import logo from "@/assets/homepage/logo.png";
 import Login from "@/components/singIn/Login";
-import userProfile from "../../public/profile.png"
+import userProfile from "../../public/profile.png";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -28,9 +28,10 @@ const Navbar = () => {
             <a href="#" className="hover:underline" aria-current="page">
               Home
             </a>
-            {/* <a href="#" className="hover:underline">
+            <Link href="/pages/flights" className="hover:underline">
               Flights
-            </a>
+            </Link>
+            {/*
             <a href="#" className="hover:underline">
               Train
             </a>
@@ -49,7 +50,7 @@ const Navbar = () => {
             <a href="#" className="hover:underline">
               Track Flight
             </a> */}
-          </div> 
+          </div>
           <div className="flex items-center space-x-2">
             <button className="text-white focus:outline-none">
               <svg
