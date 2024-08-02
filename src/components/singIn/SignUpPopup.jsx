@@ -28,7 +28,7 @@ function SignUpPopup({ setIsSignUpOpen, setIsSignInOpen }) {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); // Set loading to true when form submission starts
+    setLoading(true);
     try {
       const response = await axios.post("/api/auth/signup", {
         name: formData.name,
