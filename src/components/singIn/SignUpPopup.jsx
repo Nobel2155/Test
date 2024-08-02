@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
-import axios from "axios";
 import SocialLogin from "./SocialLogin";
 import Spinner from "../components/Spinner";
 
@@ -18,6 +17,7 @@ function SignUpPopup({ setIsSignUpOpen, setIsSignInOpen }) {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false); // Loading state
   const popupRef = useRef(null);
+  const axiosURL = globalAxiosURL();
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -31,40 +31,55 @@ function SignUpPopup({ setIsSignUpOpen, setIsSignInOpen }) {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post("/api/auth/signup", {
+      const response = await axiosURL.post("/auth/signup", {
         name: formData.name,
         email: formData.emailOrPhone,
         password: formData.password,
       });
-      setSuccessMessage("OTP sent to your email.");
-      setErrorMessage("");
-      setEmail(formData.emailOrPhone);
-      setShowOtpForm(true);
-      setFormData({
-        name: "",
-        emailOrPhone: "",
-        password: "",
-        agreeTerms: false,
-      });
+      if (response.data.token) {
+        setSuccessMessage("OTP sent to your email.");
+        setErrorMessage("");
+        setEmail(formData.emailOrPhone);
+        setShowOtpForm(true);
+        setFormData({
+          name: "",
+          emailOrPhone: "",
+          password: "",
+          agreeTerms: false,
+        });
+      } else {
+        setErrorMessage("Something went wrong. Please try again");
+        setFormData({
+          name: "",
+          emailOrPhone: "",
+          password: "",
+          agreeTerms: false,
+        });
+      }
     } catch (error) {
       setErrorMessage(error.response?.data.message || "An error occurred.");
       setSuccessMessage("");
     } finally {
-      setLoading(false); // Set loading to false after the response
+      setLoading(false);
     }
   };
 
   const handleOtpSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); // Set loading to true when OTP submission starts
+    setLoading(true);
     try {
-      const response = await axios.post("/api/auth/verify-otp", {
+      const response = await axiosURL.post("/auth/verify-otp", {
         email: email,
         otp: otp,
       });
-      setSuccessMessage("OTP verified successfully! Registration complete.");
-      setErrorMessage("");
-      setShowOtpForm(false);
+      if (response.status === 200) {
+        setSuccessMessage("OTP verified successfully! Registration complete.");
+        setErrorMessage("");
+        setShowOtpForm(false);
+      } else {
+        setSuccessMessage("");
+        setErrorMessage("Otp not verified. Please try with valid otp");
+      }
     } catch (error) {
       setErrorMessage(error.response?.data.message || "An error occurred.");
       setSuccessMessage("");
