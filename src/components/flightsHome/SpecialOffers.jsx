@@ -24,7 +24,7 @@ const SpecialOffers = () => {
         </button>
       </div>
 
-      <div className="grid grid-cols-3 gap-14 mt-8">
+      <div className="grid grid-cols-3 gap-14 gap-y-10 mt-8">
         {trips.map((trip) => (
           <div
             key={trip}
