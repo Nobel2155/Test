@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
-import axios from "axios";
 import SocialLogin from "./SocialLogin";
+import globalAxiosURL from "../../hooks/globalAxiosURL";
 
 function SignUpPopup({ setIsSignUpOpen, setIsSignInOpen }) {
   const [formData, setFormData] = useState({
@@ -17,6 +17,7 @@ function SignUpPopup({ setIsSignUpOpen, setIsSignInOpen }) {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false); // Loading state
   const popupRef = useRef(null);
+  const axiosURL = globalAxiosURL();
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -30,14 +31,11 @@ function SignUpPopup({ setIsSignUpOpen, setIsSignInOpen }) {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post(
-        "http://localhost:3002/api/auth/signup",
-        {
-          name: formData.name,
-          email: formData.emailOrPhone,
-          password: formData.password,
-        }
-      );
+      const response = await axiosURL.post("/auth/signup", {
+        name: formData.name,
+        email: formData.emailOrPhone,
+        password: formData.password,
+      });
       if (response.data.token) {
         setSuccessMessage("OTP sent to your email.");
         setErrorMessage("");
@@ -70,13 +68,10 @@ function SignUpPopup({ setIsSignUpOpen, setIsSignInOpen }) {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post(
-        "http://localhost:3002/api/auth/verify-otp",
-        {
-          email: email,
-          otp: otp,
-        }
-      );
+      const response = await axiosURL.post("/auth/verify-otp", {
+        email: email,
+        otp: otp,
+      });
       if (response.status === 200) {
         setSuccessMessage("OTP verified successfully! Registration complete.");
         setErrorMessage("");

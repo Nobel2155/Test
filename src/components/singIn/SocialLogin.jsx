@@ -13,12 +13,14 @@ import {
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { login } from "@/redux/authSlice";
+import globalAxiosURL from "@/hooks/globalAxiosURL";
 
 const googleProvider = new GoogleAuthProvider();
 const facebookProvider = new FacebookAuthProvider();
 // const appleProvider = new AppleAuthProvider();
 
 const SocialLogin = ({ setIsLoading }) => {
+  const axiosURL = globalAxiosURL();
   const dispatch = useDispatch();
   const handleGoogleLogin = async () => {
     setIsLoading(true);
@@ -26,15 +28,12 @@ const SocialLogin = ({ setIsLoading }) => {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
       if (user) {
-        const response = await axios.post(
-          "http://localhost:3002/api/auth/signup",
-          {
-            isSocialLogin: true,
-            name: user?.displayName,
-            email: user?.email,
-            photo: user?.photoURL,
-          }
-        );
+        const response = await axiosURL.post("/auth/signup", {
+          isSocialLogin: true,
+          name: user?.displayName,
+          email: user?.email,
+          photo: user?.photoURL,
+        });
         if (response?.data?.user) {
           dispatch(
             login({
@@ -58,15 +57,12 @@ const SocialLogin = ({ setIsLoading }) => {
       const result = await signInWithPopup(auth, facebookProvider);
       const user = result.user;
       if (user) {
-        const response = await axios.post(
-          "http://localhost:3002/api/auth/signup",
-          {
-            isSocialLogin: true,
-            name: user?.displayName,
-            email: user?.email,
-            photo: user?.photoURL,
-          }
-        );
+        const response = await axiosURL.post("/auth/signup", {
+          isSocialLogin: true,
+          name: user?.displayName,
+          email: user?.email,
+          photo: user?.photoURL,
+        });
         if (response?.data?.user) {
           dispatch(
             login({
@@ -79,8 +75,8 @@ const SocialLogin = ({ setIsLoading }) => {
       }
     } catch (error) {
       setIsLoading(false);
-      console.log(error.code)
-      console.log(error.message)
+      console.log(error.code);
+      console.log(error.message);
     }
   };
 
