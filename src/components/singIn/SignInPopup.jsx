@@ -5,10 +5,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { login } from "@/redux/authSlice";
 import SocialLogin from "./SocialLogin";
 import SignUpPopup from "./SignUpPopup";
+import { FaSpinner } from "react-icons/fa";
 
 function SignInPopup({ setIsSignInOpen, setIsSignUpOpen }) {
   const [isSignUpOpen, setIsSignUpOpenState] = useState(false);
-  const [isDisabled, setIsDisabled] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     emailOrPhone: "",
     password: "",
@@ -17,9 +18,8 @@ function SignInPopup({ setIsSignInOpen, setIsSignUpOpen }) {
   const [errorMessage, setErrorMessage] = useState("");
   const [validationErrors, setValidationErrors] = useState({});
   const popupRef = useRef(null);
-
   const dispatch = useDispatch();
-  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const { isLoggedIn } = useSelector((state) => state.auth);
 
   const toggleSignUpPopup = (e) => {
     e.preventDefault();
@@ -49,15 +49,15 @@ function SignInPopup({ setIsSignInOpen, setIsSignUpOpen }) {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    setIsDisabled(true);
+    setIsLoading(true)
     if (!validateForm()) {
-      setIsDisabled(false);
+      setIsLoading(false);
       return;
     }
 
     try {
       const response = await axios.post(
-        "https://hamsfly-server-v1-0-0.onrender.com/api/auth/login",
+        "http://localhost:3002/api/auth/login",
         {
           email: formData.emailOrPhone,
           password: formData.password,
@@ -71,8 +71,13 @@ function SignInPopup({ setIsSignInOpen, setIsSignUpOpen }) {
       });
       console.log("Login successful:", response.data);
 
-      // Dispatch the login action with user email and token
-      dispatch(login({ user: response.data.user, email: response.data.email, token: response.data.token }));
+      dispatch(
+        login({
+          user: response.data.user,
+          email: response.data.email,
+          token: response.data.token,
+        })
+      );
 
       setIsSignInOpen(false);
     } catch (error) {
@@ -82,7 +87,7 @@ function SignInPopup({ setIsSignInOpen, setIsSignUpOpen }) {
       setSuccessMessage("");
       console.error("Login error:", error.response?.data || error.message);
     }
-    setIsDisabled(false);
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -156,11 +161,17 @@ function SignInPopup({ setIsSignInOpen, setIsSignUpOpen }) {
             <div className="flex gap-1 items-center text-base w-[260px]"></div>
             <div>
               <button
-                className="w-full bg-[#00703E] py-2 rounded text-white hover:bg-green-700"
+                className={`w-full bg-[#00703E] duration-300 disabled:cursor-not-allowed py-2 rounded text-center text-white ${
+                  isLoading ? "hover:bg-[#00703E]" : "hover:bg-green-700"
+                } flex items-center justify-center`}
                 type="submit"
-                disabled={isDisabled}
+                disabled={isLoading}
               >
-                {isDisabled ? "Loading . . ." : "Login"}
+                {isLoading ? (
+                  <FaSpinner className="animate-spin" size={20} />
+                ) : (
+                  "Login"
+                )}
               </button>
             </div>
             <div className="mt-2 text-center">
@@ -192,7 +203,7 @@ function SignInPopup({ setIsSignInOpen, setIsSignUpOpen }) {
                 />
               )}
             </div>
-            <SocialLogin />
+            <SocialLogin setIsLoading={setIsLoading} />
           </div>
         </form>
       </div>
