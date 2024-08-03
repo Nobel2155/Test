@@ -11,10 +11,9 @@ import { MdClose } from "react-icons/md";
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { useDispatch } from 'react-redux';
-import { setItineraryData } from '../../redux/authSlice';
+import { setRevalidateData } from '@/redux/authSlice';
 import { useSelector } from "react-redux";
 import SignInPopup from "@/components/singIn/SignInPopup"
-
 
 const getLocalStorageData = () => {
   return {
@@ -35,6 +34,7 @@ const buildOriginDestinationInfo = (
   arrivalAirports
 ) => {
   return departureDates.map((date, index) => ({
+    // RPH: (index + 1).toString(),
     RPH: (index + 1).toString(),
     DepartureDateTime: `${date}T00:00:00`,
     OriginLocation: { LocationCode: departureAirports[index] },
@@ -51,66 +51,6 @@ const buildPassengerTypes = (adults, kids, children, infants) => {
 
   return passengerTypes;
 };
-
-// const fetchItineraryData = async (originDestinationInfo, passengerTypes) => {
-//   const requestOptions = {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//       "Conversation-ID": "2021.01.DevStudio",
-//       Authorization:
-//         "Bearer T1RLAQLS66ol77q6VvK2n7VCZKuYWRgygxYcT57LoehxmovHnxCaYO209HBgIWaRbUjytKS5AADQQhDH9qvAV9C7l27OW7Yf0Zug8MeLsopm7ed3STEz303c9GK+Tp4dGeINguoHlQLLqnrWFUaR9eeuD7dCuXkIgUjCfXVnoU9ZRHDpO8pL+1VcOuNIjSqtT1K+n5M58L1JDi3XEUSMi8HVOfNJ75xQZ+/499Y0mpEvJ8kswDwJKvgy1MB5h6BDYSXyD9d+gwnZj+kV1hKYRIL0thfLcuUVuWu5q36ZzBJ6JA+Fr/JbJIStyQ2LZf9laesW7ggZzF2J9NkdMAv6Oo8rB+DvFIG7Fw**",
-//       Cookie:
-//         "incap_ses_1787_2768614=0SjoZhqWLgdPMbDpIbPMGPJAomYAAAAApLohNoE3k6viHlK62M2bnA==; nlbi_2768614=ZKBcKV/r9XrbAKhrRh9LCAAAAACFsRG/G1bTU1Ur3t/q4bKx; visid_incap_2768614=SPMPSIHqQUSMgkgbdUhsdjadOGYAAAAAQkIPAAAAAAA0To3MKwPR8OocZaNNanzT",
-//     },
-//     body: JSON.stringify({
-//       OTA_AirLowFareSearchRQ: {
-//         Version: "5",
-//         POS: {
-//           Source: [
-//             {
-//               PseudoCityCode: "7C18",
-//               RequestorID: {
-//                 Type: "1",
-//                 ID: "1",
-//                 CompanyName: { Code: "TN" },
-//               },
-//             },
-//           ],
-//         },
-//         OriginDestinationInformation: originDestinationInfo,
-//         TravelPreferences: {
-//           TPA_Extensions: {
-//             DataSources: {
-//               NDC: "Disable",
-//               ATPCO: "Enable",
-//               LCC: "Disable",
-//             },
-//             PreferNDCSourceOnTie: { Value: false },
-//           },
-//         },
-//         TravelerInfoSummary: {
-//           AirTravelerAvail: [{ PassengerTypeQuantity: passengerTypes }],
-//         },
-//         TPA_Extensions: {
-//           IntelliSellTransaction: { RequestType: { Name: "200ITINS" } },
-//         },
-//       },
-//     }),
-//     redirect: "follow",
-//   };
-
-//   const response = await fetch(
-//     "https://api.cert.platform.sabre.com/v5/offers/shop",
-//     requestOptions
-//   );
-//   if (!response.ok) {
-//     throw new Error("Failed to fetch itinerary data");
-//   }
-//   const data = response.json();
-//   dispatch(setItineraryData(data));
-//   // return await  data;
-// };
 
 const processItinerary = (data) => {
   return data.groupedItineraryResponse.itineraryGroups.flatMap((group) => {
@@ -191,25 +131,21 @@ const processItinerary = (data) => {
   });
 };
 const Result = () => {
-  const dispatch = useDispatch();
+
   const { isLoggedIn } = useSelector((state) => state.auth);
   const [isSignInOpen, setIsSignInOpen] = useState(false);
+const router = useRouter();
+  const dispatch = useDispatch();
   const [itineraries, setItineraries] = useState([]);
   const [airlines, setAirlines] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [hoveredCardIndices, setHoveredCardIndices] = useState({});
-  const router = useRouter();
+
+//   const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
 
-  const handleBookNow = () => {
-    if (!isLoggedIn) {
-      setIsSignInOpen(true);
-    } else {
-      // Redirect to the booking page if already logged in
-      router.push('/pages/bookFlights');
-    }
-  };
   const fetchItineraryData = async (originDestinationInfo, passengerTypes) => {
     const requestOptions = {
       method: "POST",
@@ -266,7 +202,6 @@ const Result = () => {
       throw new Error("Failed to fetch itinerary data");
     }
     const data = response.json();
-    dispatch(setItineraryData(data));
     return await  data;
   };
 
@@ -365,11 +300,11 @@ const Result = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [selectedItinerary, setSelectedItinerary] = useState(null);
 
-  const handleBookNowClick = (itinerary) => {
-    setSelectedItinerary(itinerary); // Set the selected itinerary
+  const handleSelect = (itinerary) => {
+    setSelectedItinerary(itinerary); 
+
     setShowPopup(true); // Show the popup
   };
-
   const popupRef = useRef();
 
   const handleClickOutside = (event) => {
@@ -429,6 +364,180 @@ const Result = () => {
     return `${hours}h ${minutes}m`;
   };
 
+
+
+
+  const handleBookNow = async () => {
+
+
+    //SIGN IN CONDITIOON START
+   
+
+    // if (!isLoggedIn) {
+    //   setIsSignInOpen(true);
+    // } else {
+    //   // Redirect to the booking page if already logged in
+    //   router.push('/pages/bookFlights');
+    // }
+
+     //SIGN IN CONDITIOON END
+
+
+
+    const getLocalStorageData = () => {
+      return {
+        departureDates: JSON.parse(localStorage.getItem("departureDates")) || [],
+        departureAirports:
+          JSON.parse(localStorage.getItem("departureAirports")) || [],
+        arrivalAirports: JSON.parse(localStorage.getItem("arrivalAirports")) || [],
+        adults: parseInt(localStorage.getItem("adults")) || 1,
+        kids: parseInt(localStorage.getItem("kids")) || 0,
+        children: parseInt(localStorage.getItem("children")) || 0,
+        infants: parseInt(localStorage.getItem("infants")) || 0,
+      };
+    };
+
+    const buildPassengerTypes = (adults, kids, children, infants) => {
+      const passengerTypes = [{ Code: "ADT", Quantity: adults }];
+    
+      if (kids > 0) passengerTypes.push({ Code: "C06", Quantity: kids });
+      if (children > 0) passengerTypes.push({ Code: "C03", Quantity: children });
+      if (infants > 0) passengerTypes.push({ Code: "INF", Quantity: infants });
+    
+      return passengerTypes;
+    };
+
+    const { adults, kids, children, infants } = getLocalStorageData();
+    const passengerTypes = buildPassengerTypes(adults, kids, children, infants);
+  
+    const totalSeatsRequested = adults + kids + children ;
+
+    setLoading(true);
+    setError(null);
+
+
+
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    myHeaders.append("Conversation-ID", "2021.01.DevStudio");
+    myHeaders.append("Authorization", "Bearer T1RLAQLwO+x9h9KJDYk+XpGoeBb591aIn5ymhyDF4PxP56KAZhD6VvtQKYMLnMS/q3uRPzmsAADQnUVi67UPZunLS28wxKRRcU3IlA2E5qF0SPrc9almR+vQkKZJrmfJ93zfsZnKUeu4oNpNXGSkht+BhjAcii/1KBFOCNuHqE2Mfnxe3/i2Zz9drRw72/TB5c7pDgLFh73nw+pFbE56NbZVhcsgcLewRpKo4BagEcA7iZhnMm4jV33scsbRPbMzT7DSTuoqnkavhXz0hPaWMHmVEhO7MRCejcRjkJKqJXwmZSII7TpKcCkYiMC7tbnIyp0JwAMO0oLsQTzUpYnOAoX5KgN2PzV8dg**");
+    myHeaders.append("Cookie", "visid_incap_2768617=r3IT5hkTS2Sk7L2g/yn2ykRAp2YAAAAAQUIPAAAAAABmR4u9389Ltp6fM+YKWLBC; incap_ses_1563_2768614=PQlBaKRU+Q5LZg3/U+SwFWourWYAAAAA/zuNW81hg2Uc09RLcWPGbQ==; nlbi_2768614=cZ5mEVGKsCwrF0iIRh9LCAAAAADPU4RMEj7LN18IjlcYMOn8; visid_incap_2768614=3J2eut5QSi+1FaSojdx0U8zwKWYAAAAAQUIPAAAAAAD1hhe0JYi5vGyLqzKkpO1o");
+
+    const raw = JSON.stringify({
+      "OTA_AirLowFareSearchRQ": {
+        "Version": "5",
+        "TravelPreferences": {
+          "TPA_Extensions": {
+            "VerificationItinCallLogic": {
+              "Value": "L"
+            }
+          }
+        },
+        "TravelerInfoSummary": {
+          "SeatsRequested": [
+            totalSeatsRequested
+          ],
+          "AirTravelerAvail": [
+            {
+              "PassengerTypeQuantity": 
+                passengerTypes
+                
+              
+            }
+          ]
+        },
+        "POS": {
+          "Source": [
+            {
+              "PseudoCityCode": "7C18",
+              "RequestorID": {
+                "Type": "1",
+                "ID": "1",
+                "CompanyName": {
+                  "Code": "TN"
+                }
+              }
+            }
+          ]
+        },
+        "OriginDestinationInformation": selectedItinerary.legs.map((leg, legIndex) => {
+        return {
+          "RPH": (legIndex + 1).toString(),
+          "DepartureDateTime": `${leg.departureDate}T00:00:00`,
+          "OriginLocation": {
+            "LocationCode": leg.departureLocation
+          },
+          "DestinationLocation": {
+            "LocationCode": leg.arrivalLocation
+          },
+          "TPA_Extensions": {
+            "SegmentType": {
+              "Code": "O"
+            },
+            "Flight": leg.schedules.map((schedule, idx) => {
+              return {
+                "Number": schedule.carrier.marketingFlightNumber,
+                "DepartureDateTime":`${leg.departureDate}T${schedule.departure.time.slice(0, 8)}` ,
+                "ArrivalDateTime":`${leg.departureDate}T${schedule.arrival.time.slice(0, 8)}`,
+                "Type": "A",
+                "ClassOfService": "K",
+                "OriginLocation": {
+                  "LocationCode": schedule.departure.airport
+                },
+                "DestinationLocation": {
+                  "LocationCode": schedule.arrival.airport
+                },
+                "Airline": {
+                  "Operating": schedule.carrier.marketing,
+                  "Marketing": schedule.carrier.marketing
+                }
+              };
+            })
+          }
+        };
+      }),
+        "TPA_Extensions": {
+          "IntelliSellTransaction": {
+            "RequestType": {
+              "Name": "50ITINS"
+            }
+          }
+        }
+      }
+    });
+
+    console.log(raw,"handleBookNow");
+
+    const requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow"
+    };
+
+    try {
+      const response = await fetch("https://api.cert.platform.sabre.com/v5/shop/flights/revalidate", requestOptions);
+      if (response.ok) {
+        const result = await response.json();
+        console.log(result,"result");
+        dispatch(setRevalidateData(result));
+        // Pass data as query parameter
+        router.push( "/pages/bookFlights");
+        
+      } else {
+        console.error('Error:', response.statusText);
+        setError(response.statusText);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+      
+
   return (
     <div className="flex flex-col justify-center items-center">
       {error && <div className="text-red-500">Error: {error.message}</div>}
@@ -465,7 +574,7 @@ const Result = () => {
                     <p className="">{getDayOfWeek(leg.departureDate)}</p> |
                     <p className="">{leg.departureDate}</p>
                   </div>
-                  {/* <div className="flex gap-2 justify-around items-center">
+                  <div className="flex gap-2 justify-around items-center">
                     <p className="text-base text-gray-600">
                       Total Duration: {calculateTotalDuration(leg)}
                     </p>
@@ -475,8 +584,10 @@ const Result = () => {
                     <p className="text-base text-gray-600">
                       Total Passengers: {selectedItinerary.totalPassengers}
                     </p>
-                  </div> */}
+                  </div>
                 </div>
+
+
                 <div className="">
                   {leg.schedules.map((schedule, idx) => (
                     <div className="" key={idx}>
@@ -539,7 +650,7 @@ const Result = () => {
                             {schedule.elapsedTime % 60}m
                           </p>
                           <p className=" text-gray-600">
-                            Airline: {schedule.carrier.marketing}{" "}
+                            | {schedule.carrier.marketing}{" "}
                             {schedule.carrier.marketingFlightNumber}
                           </p>
                         </div>
@@ -573,7 +684,8 @@ const Result = () => {
                 <p className="text-2xl font-bold">
                   Price:{" "}
                   {
-                    selectedItinerary.pricingInformation[0].fare.totalFare.totalPrice
+                    selectedItinerary.pricingInformation[0].fare.totalFare
+                      .totalPrice
                   }{" "}
                   BDT
                 </p>
@@ -598,16 +710,16 @@ const Result = () => {
                   )}
                 </p>
               </div>
-              <button
-                className="mt-4 bg-[#00703E] text-white py-3 px-6 rounded-lg hover:bg-green-700 font-bold transition-colors duration-300 absolute right-7"
-                onClick={handleBookNow}
-              >
-                Book Now
-              </button>
+              <div className="mt-4 bg-[#00703E] text-white py-3 px-6 rounded-lg hover:bg-green-700 font-bold transition-colors duration-300 absolute right-7">
+                <button onClick={handleBookNow} >
+                  Book Now
+                </button>
+              </div>
+                {isSignInOpen && <SignInPopup setIsSignInOpen={setIsSignInOpen} />}
 
-              {isSignInOpen && <SignInPopup setIsSignInOpen={setIsSignInOpen} />}
             </div>
           </div>
+
 
           {/* popUp End............... */}
           {/* popUp End............... */}
@@ -735,7 +847,7 @@ const Result = () => {
                 </p>
                 <button
                   className=" px-3 py-1 text-white rounded bg-blue-600 hidden bookbuttonshow"
-                  onClick={() => handleBookNowClick(itinerary)}
+                  onClick={() => handleSelect(itinerary)}
                 >
                   Select
                 </button>
